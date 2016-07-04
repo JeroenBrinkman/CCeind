@@ -30,7 +30,7 @@ expr: type ID (ASS expr)? 					#declExpr
     | TRUE              					#trueExpr
     | FALSE             					#falseExpr
     | QUOTE CHAR QUOTE						#charExpr
-    | DQUOTE STRING DQUOTE					#stringExpr
+    | STR 									#stringExpr
     ;
 
 /** Prefix operator. */

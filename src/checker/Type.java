@@ -17,6 +17,7 @@ abstract public class Type {
 	
 	public static final Type getString(int le){
 		String s = new String();
+		s.setLength(le);
 		return s;
 	}
 	private final TypeKind kind;

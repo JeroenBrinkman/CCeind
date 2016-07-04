@@ -55,6 +55,7 @@ public class TypeChecker extends TempNameBaseListener {
 					+ node.getText());
 		}
 		if (!actual.equals(expected)) {
+			System.out.println(node.getText());
 			addError(node, "Expected type '%s' but found '%s'", expected,
 					actual);
 		}
@@ -153,7 +154,8 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitStringExpr(StringExprContext ctx) {
-		setType(ctx, checker.Type.getString(ctx.getText().length()));
+		setType(ctx, checker.Type.getString(ctx.STR().getText().length()));
+		setEntry(ctx,ctx);
 	}
 
 	@Override
@@ -289,6 +291,8 @@ public class TypeChecker extends TempNameBaseListener {
 		if(ctx.expr() != null){
 			checkType(ctx.expr(), getType(ctx.type()));
 			setEntry(ctx, entry(ctx.expr()));
+			sT.add(ctx.ID().getText(), getType(ctx.type()));			
+		}else{
 			sT.add(ctx.ID().getText(), getType(ctx.type()));
 		}
 		setType(ctx, Type.VOID);
