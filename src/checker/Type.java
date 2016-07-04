@@ -34,7 +34,7 @@ abstract public class Type {
 	/** returns the size (in bytes) of a value of this type. */
 	abstract public int size();
 
-	/** Representation of the Pascal Boolean type. */
+	/** Representation of the Boolean type. */
 	static public class Bool extends Type {
 		private Bool() {
 			super(TypeKind.BOOL);
@@ -51,7 +51,7 @@ abstract public class Type {
 		}
 	}
 
-	/** Representation of the Pascal Integer type. */
+	/** Representation of the Integer type. */
 	static public class Int extends Type {
 		private Int() {
 			super(TypeKind.INT);
@@ -68,6 +68,7 @@ abstract public class Type {
 		}
 	}
 	
+	/** Representation of the Char type. */
 	static public class Char extends Type{
 
 		private Char(){
@@ -86,6 +87,7 @@ abstract public class Type {
 		
 	}
 	
+	/** Representation of the String type. */
 	static public class String extends Type{
 		private int length = 0;
 		private String(){
@@ -109,6 +111,7 @@ abstract public class Type {
 		
 	}
 	
+	/** Representation of the Void type. */
 	static public class Void extends Type{
 
 		private Void(){

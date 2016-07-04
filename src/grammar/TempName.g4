@@ -24,7 +24,7 @@ expr: type ID (ASS expr)? 					#declExpr
     | expr compOp expr  					#compExpr
     | expr boolOp expr  	   		 		#boolExpr
     | LPAR expr RPAR    			  		#parExpr
-    | LBRACE (expr SEMI)* expr RBRACE 		#blockExpr
+    | LBRACE (expr SEMI)* expr SEMI RBRACE 	#blockExpr
     | ID                					#idExpr
     | NUM               					#numExpr
     | TRUE              					#trueExpr
@@ -43,6 +43,7 @@ multOp: STAR | SLASH | MODULO;
 plusOp: PLUS | MINUS;
 
 /** Boolean operator. */
+//TODO appart?
 boolOp: AND | OR;
 
 /** Comparison operator. */
@@ -115,7 +116,6 @@ fragment LETTER: [a-zA-Z];
 fragment DIGIT: [0-9];
 
 // Skipped token types
-COMMENT: LBRACE .*? RBRACE -> skip;
 WS: [ \t\r\n]+ -> skip;
 
 fragment A: [aA];

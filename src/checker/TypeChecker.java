@@ -1,6 +1,7 @@
 package checker;
 
 import grammar.TempNameBaseListener;
+import grammar.TempNameParser;
 import grammar.TempNameParser.*;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -16,19 +18,15 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 public class TypeChecker extends TempNameBaseListener {
 	/** Result of the latest call of {@link #check}. */
 	private Result result;
-	/** Variable scope for the latest call of {@link #check}. */
-	//TODO layered scope (symboltable?)
-	private Scope scope;
 	/** List of errors collected in the latest call of {@link #check}. */
 	private List<String> errors;
-
+	/** Variable scope for the latest call of {@link #check}. */
+	private SymbolTable sT;
 	/** Runs this checker on a given parse tree,
 	 * and returns the checker result.
 	 * @throws ParseException if an error was found during checking.
 	 */
-	public Result check(ParseTree tree) throws ParseException {
-		
-		this.scope = new Scope();
+	public Result check(ParseTree tree) throws ParseException {	
 		this.result = new Result();
 		this.errors = new ArrayList<>();
 		new ParseTreeWalker().walk(this, tree);
@@ -125,6 +123,22 @@ public class TypeChecker extends TempNameBaseListener {
 	private ParserRuleContext entry(ParseTree node) {
 		return this.result.getEntry(node);
 	}
+	
+	@Override
+	public void enterProgram(@NotNull TempNameParser.ProgramContext ctx) {
+		sT = new SymbolTable();
+		sT.openScope();
+	}
+	
+	@Override
+	public void exitProgram(@NotNull TempNameParser.ProgramContext ctx) {
+		sT.closeScope();
+	}
+
+	@Override
+	public void enterBlockExpr(BlockExprContext ctx) {
+		sT.openScope();
+	}
 
 	@Override
 	public void exitTrueExpr(TrueExprContext ctx) {
@@ -182,6 +196,7 @@ public class TypeChecker extends TempNameBaseListener {
 		if(ctx.expr().size() > 0) {
             setEntry(ctx, entry(ctx.expr(0)));
         }
+		sT.closeScope();
 	}
 
 	@Override
@@ -211,12 +226,12 @@ public class TypeChecker extends TempNameBaseListener {
 	@Override
 	public void exitIdTarget(IdTargetContext ctx) {
 		final String id = ctx.ID().getText();
-        if(!scope.contains(id)) {
+        if(!sT.contains(id)) {
             addError(ctx, "Variable '%s' not declared", id);
             setType(ctx, Type.VOID);
         } else {
-            setType(ctx, scope.type(id));
-            setOffset(ctx, scope.offset(id));
+            setType(ctx, sT.getType(id));
+            //setOffset(ctx, sT.offset(id));
         }
 	}
 
@@ -235,7 +250,7 @@ public class TypeChecker extends TempNameBaseListener {
 	public void exitReadExpr(ReadExprContext ctx) {
 		for(int i = 0; i < ctx.ID().size(); i++){
 			String targetString = ctx.ID(i).toString();
-			if(!scope.contains(targetString)){
+			if(!sT.contains(targetString)){
 				errors.add(" Attempting to read undeclared variable '" + ctx.ID().toString() + "' !");
 			}
 		}
@@ -274,6 +289,7 @@ public class TypeChecker extends TempNameBaseListener {
 		if(ctx.expr() != null){
 			checkType(ctx.expr(), getType(ctx.type()));
 			setEntry(ctx, entry(ctx.expr()));
+			sT.add(ctx.ID().getText(), getType(ctx.type()));
 		}
 		setType(ctx, Type.VOID);
 	}
@@ -317,13 +333,13 @@ public class TypeChecker extends TempNameBaseListener {
 	@Override
 	public void exitIdExpr(IdExprContext ctx) {
 		String id = ctx.ID().getText();
-		Type type = this.scope.type(id);
+		Type type = this.sT.getType(id);
 		if (type == null) {
 			addError(ctx, "Variable '%s' not declared", id);
 			setType(ctx, Type.VOID);
 		} else {
 			setType(ctx, type);
-			setOffset(ctx, this.scope.offset(id));
+			//setOffset(ctx, this.scope.offset(id));
 			setEntry(ctx, ctx);
 		}
 	}
