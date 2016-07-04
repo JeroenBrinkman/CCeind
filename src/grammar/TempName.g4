@@ -37,7 +37,7 @@ expr: type ID (ASS expr)? 					#declExpr
 prfOp: MINUS | NOT;
 
 /** Multiplicative operator. */
-multOp: STAR | SLASH;
+multOp: STAR | SLASH | MODULO;
 
 /** Additive operator. */
 plusOp: PLUS | MINUS;
@@ -96,6 +96,7 @@ LBRACE: '{';
 LPAR:   '(';
 LT:     '<';
 MINUS:  '-';
+MODULO:	'%';
 NE:     '<>';
 PLUS:   '+';
 QUOTE:  '\'';
