@@ -13,7 +13,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-
 /** Class to type check and calculate flow entries and variable offsets. */
 public class TypeChecker extends TempNameBaseListener {
 	/** Result of the latest call of {@link #check}. */
@@ -22,11 +21,14 @@ public class TypeChecker extends TempNameBaseListener {
 	private List<String> errors;
 	/** Variable scope for the latest call of {@link #check}. */
 	private SymbolTable sT;
-	/** Runs this checker on a given parse tree,
-	 * and returns the checker result.
-	 * @throws ParseException if an error was found during checking.
+
+	/**
+	 * Runs this checker on a given parse tree, and returns the checker result.
+	 * 
+	 * @throws ParseException
+	 *             if an error was found during checking.
 	 */
-	public Result check(ParseTree tree) throws ParseException {	
+	public Result check(ParseTree tree) throws ParseException {
 		this.result = new Result();
 		this.errors = new ArrayList<>();
 		new ParseTreeWalker().walk(this, tree);
@@ -35,7 +37,7 @@ public class TypeChecker extends TempNameBaseListener {
 		}
 		return this.result;
 	}
-	
+
 	/** Indicates if any errors were encountered in this tree listener. */
 	public boolean hasErrors() {
 		return !getErrors().isEmpty();
@@ -45,49 +47,59 @@ public class TypeChecker extends TempNameBaseListener {
 	public List<String> getErrors() {
 		return this.errors;
 	}
-	/** Checks the inferred type of a given parse tree,
-	 * and adds an error if it does not correspond to the expected type.
+
+	/**
+	 * Checks the inferred type of a given parse tree, and adds an error if it
+	 * does not correspond to the expected type.
 	 */
 	private void checkType(ParserRuleContext node, Type expected) {
 		Type actual = getType(node);
 		if (actual == null) {
-			throw new IllegalArgumentException("Missing inferred type of "
-					+ node.getText());
+			throw new IllegalArgumentException("Missing inferred type of " + node.getText());
 		}
 		if (!actual.equals(expected)) {
 			System.out.println(node.getText());
-			addError(node, "Expected type '%s' but found '%s'", expected,
-					actual);
+			addError(node, "Expected type '%s' but found '%s'", expected, actual);
 		}
 	}
 
-	/** Checks the inferred type of a given parse tree,
-	 * and adds an error if it does correspond to the expected type.
+	/**
+	 * Checks the inferred type of a given parse tree, and adds an error if it
+	 * does correspond to the expected type.
 	 */
 	private void checkNotType(ParserRuleContext node, Type expected) {
 		Type actual = getType(node);
 		if (actual == null) {
-			throw new IllegalArgumentException("Missing inferred type of "
-					+ node.getText());
+			throw new IllegalArgumentException("Missing inferred type of " + node.getText());
 		}
 		if (actual.equals(expected)) {
 			addError(node, "Illegal type '%s' not allowed", expected);
 		}
 	}
-	/** Records an error at a given parse tree node.
-	 * @param ctx the parse tree node at which the error occurred
-	 * @param message the error message
-	 * @param args arguments for the message, see {@link String#format}
+
+	/**
+	 * Records an error at a given parse tree node.
+	 * 
+	 * @param ctx
+	 *            the parse tree node at which the error occurred
+	 * @param message
+	 *            the error message
+	 * @param args
+	 *            arguments for the message, see {@link String#format}
 	 */
-	private void addError(ParserRuleContext node, String message,
-			Object... args) {
+	public void addError(ParserRuleContext node, String message, Object... args) {
 		addError(node.getStart(), message, args);
 	}
 
-	/** Records an error at a given token.
-	 * @param token the token at which the error occurred
-	 * @param message the error message
-	 * @param args arguments for the message, see {@link String#format}
+	/**
+	 * Records an error at a given token.
+	 * 
+	 * @param token
+	 *            the token at which the error occurred
+	 * @param message
+	 *            the error message
+	 * @param args
+	 *            arguments for the message, see {@link String#format}
 	 */
 	private void addError(Token token, String message, Object... args) {
 		int line = token.getLine();
@@ -124,13 +136,13 @@ public class TypeChecker extends TempNameBaseListener {
 	private ParserRuleContext entry(ParseTree node) {
 		return this.result.getEntry(node);
 	}
-	
+
 	@Override
 	public void enterProgram(@NotNull TempNameParser.ProgramContext ctx) {
 		sT = new SymbolTable();
 		sT.openScope();
 	}
-	
+
 	@Override
 	public void exitProgram(@NotNull TempNameParser.ProgramContext ctx) {
 		sT.closeScope();
@@ -149,13 +161,13 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitBoolType(BoolTypeContext ctx) {
-		 setType(ctx, Type.BOOL);
+		setType(ctx, Type.BOOL);
 	}
 
 	@Override
 	public void exitStringExpr(StringExprContext ctx) {
 		setType(ctx, Type.STRING);
-		setEntry(ctx,ctx);
+		setEntry(ctx, ctx);
 	}
 
 	@Override
@@ -166,9 +178,9 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitCompExpr(CompExprContext ctx) {
-		if(ctx.compOp().getText().equals("<>") || ctx.compOp().getText().equals("==") ){
-			checkType(ctx.expr(1),getType(ctx.expr(0)));
-		}else{
+		if (ctx.compOp().getText().equals("<>") || ctx.compOp().getText().equals("==")) {
+			checkType(ctx.expr(1), getType(ctx.expr(0)));
+		} else {
 			checkType(ctx.expr(0), Type.INT);
 			checkType(ctx.expr(1), Type.INT);
 		}
@@ -183,21 +195,21 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitIfExpr(IfExprContext ctx) {
-		 checkType(ctx.expr(0), Type.BOOL);
-	     setEntry(ctx, entry(ctx.expr(0)));
-	     if(ctx.expr(2) != null){
-	    	 checkType(ctx.expr(1), getType(ctx.expr(2)));
-	     }
-	     setType(ctx, getType(ctx.expr(1)));
+		checkType(ctx.expr(0), Type.BOOL);
+		setEntry(ctx, entry(ctx.expr(0)));
+		if (ctx.expr(2) != null) {
+			checkType(ctx.expr(1), getType(ctx.expr(2)));
+		}
+		setType(ctx, getType(ctx.expr(1)));
 	}
 
 	@Override
 	public void exitBlockExpr(BlockExprContext ctx) {
-		ExprContext last = ctx.expr(ctx.expr().size()-1);
-		setType(ctx,getType(last));
-		if(ctx.expr().size() > 0) {
-            setEntry(ctx, entry(ctx.expr(0)));
-        }
+		ExprContext last = ctx.expr(ctx.expr().size() - 1);
+		setType(ctx, getType(last));
+		if (ctx.expr().size() > 0) {
+			setEntry(ctx, entry(ctx.expr(0)));
+		}
 		sT.closeScope();
 	}
 
@@ -209,13 +221,13 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitPrintExpr(PrintExprContext ctx) {
-		for(ExprContext e : ctx.expr()){
+		for (ExprContext e : ctx.expr()) {
 			checkNotType(e, Type.VOID);
 		}
-		if(ctx.expr().size() == 1){
+		if (ctx.expr().size() == 1) {
 			setType(ctx, getType(ctx.expr(0)));
 			setEntry(ctx, entry(ctx.expr(0)));
-		}else{
+		} else {
 			setType(ctx, Type.VOID);
 		}
 	}
@@ -228,13 +240,13 @@ public class TypeChecker extends TempNameBaseListener {
 	@Override
 	public void exitIdTarget(IdTargetContext ctx) {
 		final String id = ctx.ID().getText();
-        if(!sT.contains(id)) {
-            addError(ctx, "Variable '%s' not declared", id);
-            setType(ctx, Type.VOID);
-        } else {
-            setType(ctx, sT.getType(id));
-            //setOffset(ctx, sT.offset(id));
-        }
+		if (!sT.contains(id)) {
+			addError(ctx, "Variable '%s' not declared", id);
+			setType(ctx, Type.VOID);
+		} else {
+			setType(ctx, sT.getType(id));
+			// setOffset(ctx, sT.offset(id));
+		}
 	}
 
 	@Override
@@ -250,18 +262,18 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitReadExpr(ReadExprContext ctx) {
-		for(int i = 0; i < ctx.ID().size(); i++){
+		for (int i = 0; i < ctx.ID().size(); i++) {
 			String targetString = ctx.ID(i).toString();
-			if(!sT.contains(targetString)){
+			if (!sT.contains(targetString)) {
 				errors.add(" Attempting to read undeclared variable '" + ctx.ID().toString() + "' !");
 			}
 		}
-		if(ctx.ID().size() > 1){
+		if (ctx.ID().size() > 1) {
 			setType(ctx, Type.VOID);
-		}else{
+		} else {
 			setType(ctx, getType(ctx.ID(0)));
 		}
-		
+
 	}
 
 	@Override
@@ -288,12 +300,18 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitDeclExpr(DeclExprContext ctx) {
-		if(ctx.expr() != null){
+		if (ctx.expr() != null) {
 			checkType(ctx.expr(), getType(ctx.type()));
 			setEntry(ctx, entry(ctx.expr()));
-			sT.add(ctx.ID().getText(), getType(ctx.type()));			
-		}else{
-			sT.add(ctx.ID().getText(), getType(ctx.type()));
+			if (!sT.add(ctx.ID().getText(), getType(ctx.type()))) {
+				addError(ctx, "Illegal declaration, '$s' already in scope.", ctx.ID().getText());
+			}else{
+				
+			}
+		} else {
+			if(!sT.add(ctx.ID().getText(), getType(ctx.type()))){
+				addError(ctx, "Illegal declaration, '$s' already in scope.", ctx.ID().getText());
+			}
 		}
 		setType(ctx, Type.VOID);
 	}
@@ -301,8 +319,8 @@ public class TypeChecker extends TempNameBaseListener {
 	@Override
 	public void exitWhileExpr(WhileExprContext ctx) {
 		checkType(ctx.expr(0), Type.BOOL);
-        setEntry(ctx, entry(ctx.expr(0)));
-        setType(ctx, Type.VOID);
+		setEntry(ctx, entry(ctx.expr(0)));
+		setType(ctx, Type.VOID);
 	}
 
 	@Override
@@ -311,8 +329,8 @@ public class TypeChecker extends TempNameBaseListener {
 		setType(ctx, getType(ctx.target()));
 		setEntry(ctx, entry(ctx.expr()));
 	}
-	
-	//TODO assert?*/
+
+	// TODO assert?*/
 	@Override
 	public void exitPrfExpr(PrfExprContext ctx) {
 		Type type;
@@ -343,7 +361,7 @@ public class TypeChecker extends TempNameBaseListener {
 			setType(ctx, Type.VOID);
 		} else {
 			setType(ctx, type);
-			//setOffset(ctx, this.scope.offset(id));
+			// setOffset(ctx, this.scope.offset(id));
 			setEntry(ctx, ctx);
 		}
 	}
