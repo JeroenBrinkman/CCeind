@@ -15,11 +15,6 @@ abstract public class Type {
 	/** The singleton instance of the {@link Void} type. */
 	public static final Type VOID = new Void();
 	
-	public static final Type getString(int le){
-		String s = new String();
-		s.setLength(le);
-		return s;
-	}
 	private final TypeKind kind;
 
 	/** Constructor for subclasses. */

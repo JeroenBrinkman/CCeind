@@ -154,7 +154,7 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitStringExpr(StringExprContext ctx) {
-		setType(ctx, checker.Type.getString(ctx.STR().getText().length()));
+		setType(ctx, Type.STRING);
 		setEntry(ctx,ctx);
 	}
 
@@ -178,7 +178,7 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitStringType(StringTypeContext ctx) {
-		setType(ctx, checker.Type.getString(ctx.getText().length()));
+		setType(ctx, Type.STRING);
 	}
 
 	@Override
