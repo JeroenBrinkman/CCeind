@@ -7,6 +7,7 @@ import java.util.ArrayList;
  * getOrReserveRegister is the recommended method for reserving variables.
  * Constants are //TODO
  *
+ * @author Jeroen
  */
 public class RegisterManager {
 	/**
