@@ -92,6 +92,7 @@ DQUOTE: '"';
 EQ:     '==';
 GE:     '>=';
 GT:     '>';
+HTAG:	'#';
 LE:     '<=';
 LBRACE: '{';
 LPAR:   '(';
@@ -118,6 +119,7 @@ fragment DIGIT: [0-9];
 
 // Skipped token types
 WS: [ \t\r\n]+ -> skip;
+COMMENT: HTAG .*? HTAG -> skip;
 
 fragment A: [aA];
 fragment B: [bB];
