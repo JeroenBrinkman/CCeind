@@ -1,0 +1,13 @@
+start {
+	integer a := 5;
+	integer b := 4;
+	char c;
+	if a < b then c := 'a' 
+	else c := 'b';
+	integer i := 0;
+	while i < 5 do {
+	integer d := 0;
+		i := i+1;
+	};
+	print(c);
+}

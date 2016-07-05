@@ -1,0 +1,6 @@
+start {
+	integer a := 5;
+	integer b := 4;
+	integer c := a * b;
+	print(c);
+}

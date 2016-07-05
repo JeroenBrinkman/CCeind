@@ -1,0 +1,5 @@
+start {
+	boolean x := true;
+	string help := "help";
+	integer a := 1;
+}

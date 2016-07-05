@@ -29,7 +29,7 @@ expr: type ID (ASS expr)? 					#declExpr
     | NUM               					#numExpr
     | TRUE              					#trueExpr
     | FALSE             					#falseExpr
-    | QUOTE CHAR QUOTE						#charExpr
+    | CHR									#charExpr
     | STR 									#stringExpr
     ;
 
@@ -111,6 +111,7 @@ STAR:   '*';
 ID: LETTER (LETTER | DIGIT)*;
 NUM: DIGIT (DIGIT)*;
 STR: DQUOTE .*? DQUOTE;
+CHR: QUOTE LETTER QUOTE;
 
 fragment LETTER: [a-zA-Z];
 fragment DIGIT: [0-9];
