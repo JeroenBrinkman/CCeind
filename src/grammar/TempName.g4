@@ -58,30 +58,22 @@ type: INTEGER  #intType
     
 // Keywords
 AND:     A N D;
-BEGIN:   B E G I N ;
 BOOLEAN: B O O L E A N ;
 CHAR:    C H A R ;
 INTEGER: I N T E G E R ;
 DO:      D O ;
 ELSE:    E L S E ;
-END:     E N D ;
-EXIT:    E X I T ;
 FALSE:   F A L S E ;
-FUNC:    F U N C T I O N ;
 IF:      I F ;
-IN:      I N ;
 THEN:    T H E N ;
 NOT:     N O T ;
 OR:      O R ;
 OUT:     O U T ;
 PRINT: 	 P R I N T;
-PROC:    P R O C E D U R E ;
-PROGRAM: P R O G R A M ;
 READ:    R E A D ;
 START:	 S T A R T ;
 STRING:  S T R I N G ;
 TRUE:    T R U E ;
-VAR:     V A R ;
 WHILE:   W H I L E ;
 
 ASS:    ':=';
