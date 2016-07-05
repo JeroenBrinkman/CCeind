@@ -109,11 +109,6 @@ public class TypeChecker extends TempNameBaseListener {
 		this.errors.add(message);
 	}
 
-	/** Convenience method to add an offset to the result. */
-	private void setOffset(ParseTree node, Integer offset) {
-		this.result.setOffset(node, offset);
-	}
-
 	/** Convenience method to add a type to the result. */
 	private void setType(ParseTree node, Type type) {
 		this.result.setType(node, type);

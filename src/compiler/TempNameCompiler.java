@@ -18,8 +18,6 @@ import checker.Result;
 import checker.TypeChecker;
 import grammar.TempNameLexer;
 import grammar.TempNameParser;
-import iloc.Simulator;
-import iloc.model.Program;
 
 public class TempNameCompiler {
 	/** The singleton instance of this class. */

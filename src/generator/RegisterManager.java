@@ -36,7 +36,7 @@ public class RegisterManager {
 	}
 
 	private final ArrayList<Register> registers = new ArrayList<Register>();
-	private static final int MAXREG = 40;
+	private static final int MAXREG = 75;
 
 	public RegisterManager() {
 		for (int i = 0; i < MAXREG; i++) {
@@ -76,7 +76,7 @@ public class RegisterManager {
 		Register r = null;
 		for (int i = 0; i < MAXREG; i++) {
 			r = registers.get(i);
-			if (r.id == null) {
+			if (r.id == null && !r.constant) {
 				r.id = id;
 				break;
 			}
@@ -90,13 +90,35 @@ public class RegisterManager {
 	 * Free a register for a variable.
 	 */
 	public void freeReg(String id, boolean constant) {
-		for (Register r : registers) {
-			if (r.id.equals(id) && r.constant == constant) {
-				r.id = null;
-				return;
+		if (constant) {
+			for (Register r : registers) {
+				if (r.id.equals(id) && r.constant == constant) {
+					r.id = null;
+					return;
+				}
+			}
+		} else {
+			for (Register r : registers) {
+				if (r.toString().equals(id) && r.constant == constant) {
+					r.id = null;
+					r.constant = false;
+				}
 			}
 		}
 	}
 
-	// TODO constants
+	public String getConstReg() {
+		Register r = null;
+		for (int i = 0; i < MAXREG; i++) {
+			r = registers.get(i);
+			if (r.id == null && !r.constant) {
+				r.id = r.toString();
+				r.constant = true;
+				return r.toString();
+			}
+		}
+		// TODO throw out of registers exception?
+		// Should we even limit registers?
+		return r.toString();
+	}
 }

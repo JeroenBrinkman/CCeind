@@ -7,6 +7,7 @@ import java.util.List;
  * scanning, parsing and assembly of an ILOC program.
  * @author Arend Rensink
  */
+@SuppressWarnings("serial")
 public class FormatException extends Exception {
 	/** Constructs an exception without a message. */
 	public FormatException() {

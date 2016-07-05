@@ -4,6 +4,8 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Manages memory allocation for the generator/compiler. Register management is
@@ -39,6 +41,8 @@ public class MemoryManager {
 	private final Deque<ArrayList<String>> scopes = new ArrayDeque<ArrayList<String>>();
 	private final ArrayList<Block> memory;
 	private final RegisterManager regman;
+	private final static String VAR = "VARIAID:";
+	private final static String CON = "CONSTID:";
 
 	public MemoryManager() {
 		scopes.push(new ArrayList<String>());
@@ -52,8 +56,10 @@ public class MemoryManager {
 	 * offset at which this id can write to memory
 	 */
 	public int reserveMemory(String id, int size) {
-		// add to scope
-		scopes.getFirst().add(id);
+		// add to scope if not already contained
+		if (!scopes.getFirst().contains(VAR + id)) {
+			scopes.getFirst().add(VAR + id);
+		}
 		// find a location in memory where we fit
 		int offset = 0;
 		for (int i = 0; i < memory.size(); i++) {
@@ -115,23 +121,66 @@ public class MemoryManager {
 		scopes.push(new ArrayList<String>());
 	}
 
+	private final static String PATTERN = "(" + VAR + "|" + CON + ")(.*)";
+
 	/**
 	 * Closes the scope and frees all memory blocks related to the variables on
 	 * this scope. Also clears all relevant registers for further use.
 	 */
 	public void closeScope() {
+		Pattern pattern = Pattern.compile(PATTERN);
+		Matcher matcher;
 		ArrayList<String> old = scopes.pop();
 		for (String s : old) {
-			freeMemory(s);
-			regman.freeReg(s, false);
+			matcher = pattern.matcher(s);
+			if (matcher.find()) {
+				if (matcher.group(1).equals(VAR)) {
+					freeMemory(s);
+					regman.freeReg(matcher.group(2), false);
+				} else {
+					regman.freeReg(matcher.group(2), true);
+				}
+			} else {
+				// TODO throw error? This should never ever happen though.
+			}
 		}
+	}
+
+	// REGEX test
+	public static void main(String[] args) {
+		Pattern pattern = Pattern.compile(PATTERN);
+		Matcher matcher;
+		String test1 = VAR + "test1";
+		String test2 = CON + "test2";
+		matcher = pattern.matcher(test1);
+		System.out.println(matcher.find());
+		System.out.println("Test 1 match group 1: " + matcher.group(1));
+		System.out.println("Test 1 match group 2: " + matcher.group(2));
+		matcher = pattern.matcher(test2);
+		System.out.println(matcher.find());
+		System.out.println("Test 1 match group 1: " + matcher.group(1));
+		System.out.println("Test 1 match group 2: " + matcher.group(2));
 	}
 
 	/**
 	 * Forward to the registermanager.
 	 */
-	public String getReg(String id) {
+	public String getVarReg(String id) {
+		// add to scope if necesary
+		if (!scopes.getFirst().contains(VAR + id)) {
+			scopes.getFirst().add(VAR + id);
+		}
 		return regman.getOrReserveReg(id);
+	}
+
+	/**
+	 * Reserve a register for a constant value, e.g. '5'. Will be freed when the
+	 * current scope is closed
+	 */
+	public String getConstReg() {
+		String reg = regman.getConstReg();
+		scopes.getFirst().add(CON + reg);
+		return reg;
 	}
 
 	/**
