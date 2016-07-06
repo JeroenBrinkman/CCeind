@@ -54,10 +54,6 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	private ParseTreeProperty<Label> labels;
 	/** The program being built. */
 	private Program prog;
-	/** Register count, used to generate fresh registers. */
-	private int regCount;
-	/** Association of expression and target nodes to registers. */
-	private ParseTreeProperty<Reg> regs;
 	/***/
 	private MemoryManager mM;
 
@@ -68,15 +64,31 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	public Program generate(ParseTree tree, Result checkResult) {
 		this.prog = new Program();
 		this.checkResult = checkResult;
-		this.regs = new ParseTreeProperty<>();
 		this.labels = new ParseTreeProperty<>();
 		this.mM = new MemoryManager();
-		this.regCount = 0;
 		tree.accept(this);
 		return this.prog;
 	}
 
-	// Override the visitor methods
+	private void returnResult(ParseTree child, ParseTree parent) {
+		Type elseType = checkResult.getType(child);
+		if (mM.hasReg(child)) {
+			if (elseType.equals(Type.CHAR)) {
+				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
+			} else {
+				emit(OpCode.storeAI, reg(child), arp, offset(parent));
+			}
+		} else if (mM.hasMemory(child)) {
+			if (elseType.equals(Type.CHAR)) {
+				emit(OpCode.cloadAI, arp, offset(child), reg(child));
+				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
+			} else {
+				emit(OpCode.loadAI, arp, offset(child), reg(child));
+				emit(OpCode.storeAI, reg(child), arp, offset(parent));
+			}
+		}
+	}
+
 	/**
 	 * Constructs an operation from the parameters and adds it to the program
 	 * under construction.
@@ -119,12 +131,11 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		return new Label(result);
 	}
 
-	
 	private Num offset(ParseTree node) {
 		int size = 0;
-		if(checkResult.getType(node).equals(Type.INT)){
+		if (checkResult.getType(node).equals(Type.INT)) {
 			size = Machine.INT_SIZE;
-		}else if(checkResult.getType(node).equals(Type.CHAR)){
+		} else if (checkResult.getType(node).equals(Type.CHAR)) {
 			size = Machine.DEFAULT_CHAR_SIZE;
 		}
 		Num offset = new Num(mM.getOffset(node, size));
@@ -133,7 +144,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	private Reg reg(ParseTree node) {
 		String regName = mM.getVarReg(node);
-		
+
 		return null;
 
 	}

@@ -168,4 +168,8 @@ public class MemoryManager {
 		conScopes.getFirst().add(reg);
 		return reg;
 	}
+	
+	public boolean hasReg(ParseTree ctx){
+		return regman.getReg(ctx)== null;
+	}
 }

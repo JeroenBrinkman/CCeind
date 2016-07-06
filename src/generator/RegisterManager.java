@@ -51,7 +51,7 @@ public class RegisterManager {
 	 * Get an existing register for a variable that already has a register.
 	 * returns null if the variable has no register
 	 */
-	private String getReg(ParseTree ctx) {
+	public String getReg(ParseTree ctx) {
 		for (Register r : registers) {
 			if (r.ctx.equals(ctx)) {
 				return r.toString();
