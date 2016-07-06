@@ -88,15 +88,15 @@ public class MemoryManager {
 	}
 
 	/**
-	 * Get the offset of an already reserved variable
+	 * Get the offset of an variable or reserve new memory.
 	 */
-	public int getOffset(ParseTree ctx) {
+	public int getOffset(ParseTree ctx, int size) {
 		for (Block b : memory) {
 			if (b.ctx.equals(ctx)) {
 				return b.start;
 			}
 		}
-		return -1;
+		return reserveMemory(ctx, size);
 	}
 
 	/**
