@@ -54,7 +54,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	private ParseTreeProperty<Label> labels;
 	/** The program being built. */
 	private Program prog;
-	/** The memory manager of this generator*/
+	/** The memory manager of this generator */
 	private MemoryManager mM;
 
 	/**
@@ -143,8 +143,23 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	private Reg reg(ParseTree node) {
-		String regName = mM.getVarReg(node);
-		return new Reg(regName);
+		Reg reg;
+		// IF the value is ONLY stored in memory, it should be loaded into the
+		// register before use
+		if (mM.hasMemory(node) && !mM.hasReg(node)) {
+			reg = new Reg(mM.getVarReg(node));
+			Type elseType = checkResult.getType(node);
+			if (elseType.equals(Type.CHAR)) {
+				emit(OpCode.cloadAI, arp, offset(node), reg);
+			} else {
+				emit(OpCode.loadAI, arp, offset(node), reg);
+			}
+			// TODO extend for booleans, Strings
+		} else {
+			reg = new Reg(mM.getVarReg(node));
+		}
+
+		return reg;
 	}
 
 	// -----------Program-----------
