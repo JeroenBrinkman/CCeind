@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
+import iloc.model.Str;
 import iloc.eval.Machine;
 import iloc.model.Op;
 import iloc.model.OpCode;
@@ -12,28 +13,7 @@ import iloc.model.Operand;
 import checker.Result;
 import checker.Type;
 import grammar.TempNameBaseVisitor;
-import grammar.TempNameParser.AssExprContext;
-import grammar.TempNameParser.BlockExprContext;
-import grammar.TempNameParser.BoolExprContext;
-import grammar.TempNameParser.CharExprContext;
-import grammar.TempNameParser.CompExprContext;
-import grammar.TempNameParser.DeclExprContext;
-import grammar.TempNameParser.ExprContext;
-import grammar.TempNameParser.FalseExprContext;
-import grammar.TempNameParser.IdExprContext;
-import grammar.TempNameParser.IdTargetContext;
-import grammar.TempNameParser.IfExprContext;
-import grammar.TempNameParser.MultExprContext;
-import grammar.TempNameParser.NumExprContext;
-import grammar.TempNameParser.ParExprContext;
-import grammar.TempNameParser.PlusExprContext;
-import grammar.TempNameParser.PrfExprContext;
-import grammar.TempNameParser.PrintExprContext;
-import grammar.TempNameParser.ProgramContext;
-import grammar.TempNameParser.ReadExprContext;
-import grammar.TempNameParser.StringExprContext;
-import grammar.TempNameParser.TrueExprContext;
-import grammar.TempNameParser.WhileExprContext;
+import grammar.TempNameParser.*;
 import iloc.Simulator;
 import iloc.model.Label;
 import iloc.model.Num;
@@ -71,6 +51,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	private void returnResult(ParseTree child, ParseTree parent) {
+		//TODO Catching booleans and strings
 		Type elseType = checkResult.getType(child);
 		if (mM.hasReg(child)) {
 			if (elseType.equals(Type.CHAR)) {
@@ -214,22 +195,12 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		emit(OpCode.cbr, reg(ctx.expr(0)), label(ctx.expr(1)), elsez);
 		emit(label(ctx.expr(1)), OpCode.nop);
 		visit(ctx.expr(1));
-		Type thenType = checkResult.getType(ctx.expr(1));
-		if (thenType.equals(Type.CHAR)) {
-			emit(OpCode.cstoreAI, reg(ctx.expr(1)), arp, offset(ctx));
-		} else {
-			emit(OpCode.storeAI, reg(ctx.expr(1)), arp, offset(ctx));
-		}
+		returnResult(ctx.expr(1), ctx);
 		emit(OpCode.jumpI, endIf);
 		if (elseExists) {
 			emit(elsez, OpCode.nop);
 			visit(ctx.expr(2));
-			Type elseType = checkResult.getType(ctx.expr(2));
-			if (elseType.equals(Type.CHAR)) {
-				emit(OpCode.cstoreAI, reg(ctx.expr(2)), arp, offset(ctx));
-			} else {
-				emit(OpCode.storeAI, reg(ctx.expr(2)), arp, offset(ctx));
-			}
+			returnResult(ctx.expr(2), ctx);
 		}
 		emit(endIf, OpCode.nop);
 		return null;
@@ -251,38 +222,90 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	@Override
 	public Op visitPrintExpr(PrintExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitPrintExpr(ctx);
+		if(ctx.expr().size() > 1){
+			for (int i = 0; i < ctx.expr().size(); i++) {
+				visit(ctx.expr(i));
+				emit(OpCode.out, new Str(ctx.expr(i).getText() + ": " ), reg(ctx.expr(i)));
+			}
+		}else{
+			visit(ctx.expr(0));
+			emit(OpCode.out, new Str(ctx.expr(0).getText() + ": " ), reg(ctx.expr(0)));
+			returnResult(ctx.expr(0), ctx);
+		}
+		return null;	
 	}
 
 	@Override
 	public Op visitReadExpr(ReadExprContext ctx) {
 		// TODO Auto-generated method stub
-		return super.visitReadExpr(ctx);
+		return null;
 	}
 
 	@Override
 	public Op visitMultExpr(MultExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitMultExpr(ctx);
+		visit(ctx.expr(0));
+		visit(ctx.expr(1));
+		if (ctx.multOp().getText().equals("*")) {
+			//Times
+			emit(OpCode.mult, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+		} else if(ctx.multOp().getText().equals("/")){
+			//Division
+			emit(OpCode.div, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+		}else{
+			//Modulo
+			String str1 = mM.getConstReg();
+			Reg r1 = new Reg(str1);
+			emit(OpCode.div, reg(ctx.expr(0)), reg(ctx.expr(1)), r1);
+			emit(OpCode.mult, r1, reg(ctx.expr(1)), r1);
+			emit(OpCode.sub, reg(ctx.expr(0)), r1, reg(ctx));
+		}
+		return null;
 	}
 
 	@Override
 	public Op visitPlusExpr(PlusExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitPlusExpr(ctx);
+		visit(ctx.expr(0));
+		visit(ctx.expr(1));
+		if (ctx.plusOp().getText().equals("+")) {
+			emit(OpCode.add, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+		} else {
+			emit(OpCode.sub, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+		}
+		return null;
 	}
 
 	@Override
+	public Op visitPrfExpr(PrfExprContext ctx) {
+		visit(ctx.expr());
+		if (ctx.prfOp().getText().equals("-")) {
+			emit(OpCode.rsubI, reg(ctx.expr()), new Num(0), reg(ctx));
+		} else {
+			emit(OpCode.addI, reg(ctx.expr()), new Num(1), reg(ctx));
+			emit(OpCode.rsubI, reg(ctx), new Num(0), reg(ctx));
+		}
+		return null;
+	}
+	
+	@Override
 	public Op visitDeclExpr(DeclExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitDeclExpr(ctx);
+		if(ctx.expr() != null){
+			visit(ctx.expr());
+			emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID()));
+		}
+		return null;
 	}
 
 	@Override
 	public Op visitWhileExpr(WhileExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitWhileExpr(ctx);
+		emit(label(ctx), OpCode.nop);
+		visit(ctx.expr(0));
+		Label endLabel = createLabel(ctx, "end");
+		emit(OpCode.cbr, reg(ctx.expr(0)), label(ctx.expr(1)), endLabel);
+		emit(label(ctx.expr(1)), OpCode.nop);
+		visit(ctx.expr(1));
+		emit(OpCode.jumpI, label(ctx));
+		emit(endLabel, OpCode.nop);
+		return null;
 	}
 
 	@Override
@@ -293,52 +316,55 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	@Override
-	public Op visitPrfExpr(PrfExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitPrfExpr(ctx);
-	}
-
-	@Override
 	public Op visitBoolExpr(BoolExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitBoolExpr(ctx);
+		visit(ctx.expr(0));
+		visit(ctx.expr(1));
+		if (ctx.boolOp().getText().contains("o")
+				|| ctx.boolOp().getText().contains("O")) {
+			emit(OpCode.or, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+		} else {
+			emit(OpCode.and, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
+
+		}
+		return null;
 	}
 
 	// -----------Terminal expressions-----------
 
 	@Override
 	public Op visitIdExpr(IdExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitIdExpr(ctx);
+		emit(OpCode.loadAI, this.arp, offset(ctx), reg(ctx));
+		return null;
 	}
 
 	@Override
 	public Op visitNumExpr(NumExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitNumExpr(ctx);
+		emit(OpCode.loadI, new Num(Integer.parseInt(ctx.NUM().getText())),
+				reg(ctx));
+		return null;
 	}
 
 	@Override
 	public Op visitCharExpr(CharExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitCharExpr(ctx);
+		//TODO bytecode to num?
+		return null;
 	}
 
 	@Override
 	public Op visitStringExpr(StringExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitStringExpr(ctx);
+		// TODO 
+		return null;
 	}
 
 	@Override
 	public Op visitTrueExpr(TrueExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitTrueExpr(ctx);
+		emit(OpCode.loadI, TRUE_VALUE, reg(ctx));
+		return null;
 	}
 
 	@Override
 	public Op visitFalseExpr(FalseExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitFalseExpr(ctx);
+		emit(OpCode.loadI, FALSE_VALUE, reg(ctx));
+		return null;
 	}
 }
