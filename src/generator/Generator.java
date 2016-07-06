@@ -58,7 +58,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	private int regCount;
 	/** Association of expression and target nodes to registers. */
 	private ParseTreeProperty<Reg> regs;
-	/***/
+	/** The memory manager of this generator*/
 	private MemoryManager mM;
 
 	/**
@@ -133,8 +133,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	private Reg reg(ParseTree node) {
 		String regName = mM.getVarReg(node);
-		
-		return null;
+		return new Reg(regName);
 
 	}
 
