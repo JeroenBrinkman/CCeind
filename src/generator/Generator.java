@@ -5,10 +5,12 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
+import iloc.eval.Machine;
 import iloc.model.Op;
 import iloc.model.OpCode;
 import iloc.model.Operand;
 import checker.Result;
+import checker.Type;
 import grammar.TempNameBaseVisitor;
 import grammar.TempNameParser.AssExprContext;
 import grammar.TempNameParser.BlockExprContext;
@@ -16,6 +18,7 @@ import grammar.TempNameParser.BoolExprContext;
 import grammar.TempNameParser.CharExprContext;
 import grammar.TempNameParser.CompExprContext;
 import grammar.TempNameParser.DeclExprContext;
+import grammar.TempNameParser.ExprContext;
 import grammar.TempNameParser.FalseExprContext;
 import grammar.TempNameParser.IdExprContext;
 import grammar.TempNameParser.IdTargetContext;
@@ -116,24 +119,27 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		return new Label(result);
 	}
 
-	/** Assigns a register to a given parse tree node. */
-	private void setReg(ParseTree node, Reg reg) {
-		// TODO
-	}
 	
 	private Num offset(ParseTree node) {
-		//TODO get offset with node
-		return null;
-		
+		int size = 0;
+		if(checkResult.getType(node).equals(Type.INT)){
+			size = Machine.INT_SIZE;
+		}else if(checkResult.getType(node).equals(Type.CHAR)){
+			size = Machine.DEFAULT_CHAR_SIZE;
+		}
+		Num offset = new Num(mM.getOffset(node, size));
+		return offset;
 	}
+
 	private Reg reg(ParseTree node) {
-		//TODO get reg with node
-		return null;
+		String regName = mM.getVarReg(node);
 		
+		return null;
+
 	}
-	
+
 	// -----------Program-----------
-	
+
 	@Override
 	public Op visitProgram(ProgramContext ctx) {
 		emit(new Label("Program"), OpCode.nop);
@@ -142,15 +148,15 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		mM.closeScope();
 		return null;
 	}
-	
+
 	// -----------Target-----------
-			
+
 	@Override
 	public Op visitIdTarget(IdTargetContext ctx) {
-		emit(OpCode.storeAI, reg(ctx), this.arp, offset(ctx));
+		emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
 		return null;
 	}
-	
+
 	// -----------Expression-----------
 
 	@Override
@@ -199,10 +205,22 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		emit(OpCode.cbr, reg(ctx.expr(0)), label(ctx.expr(1)), elsez);
 		emit(label(ctx.expr(1)), OpCode.nop);
 		visit(ctx.expr(1));
+		Type thenType = checkResult.getType(ctx.expr(1));
+		if (thenType.equals(Type.CHAR)) {
+			emit(OpCode.cstoreAI, reg(ctx.expr(1)), arp, offset(ctx));
+		} else {
+			emit(OpCode.storeAI, reg(ctx.expr(1)), arp, offset(ctx));
+		}
 		emit(OpCode.jumpI, endIf);
 		if (elseExists) {
 			emit(elsez, OpCode.nop);
 			visit(ctx.expr(2));
+			Type elseType = checkResult.getType(ctx.expr(2));
+			if (elseType.equals(Type.CHAR)) {
+				emit(OpCode.cstoreAI, reg(ctx.expr(2)), arp, offset(ctx));
+			} else {
+				emit(OpCode.storeAI, reg(ctx.expr(2)), arp, offset(ctx));
+			}
 		}
 		emit(endIf, OpCode.nop);
 		return null;
@@ -210,8 +228,16 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	@Override
 	public Op visitBlockExpr(BlockExprContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitBlockExpr(ctx);
+		int last = ctx.expr().size() - 1;
+		mM.openScope();
+		for (int i = 0; i < ctx.expr().size() - 1; i++) {
+			visit(ctx.expr(i));
+		}
+		visit(ctx.expr(last));
+		Reg lastReg = reg(ctx.expr(last));
+		mM.closeScope();
+		emit(OpCode.storeAI, lastReg, arp, offset(ctx));
+		return null;
 	}
 
 	@Override
@@ -231,7 +257,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		// TODO Auto-generated method stub
 		return super.visitMultExpr(ctx);
 	}
-	
+
 	@Override
 	public Op visitPlusExpr(PlusExprContext ctx) {
 		// TODO Auto-generated method stub
@@ -268,9 +294,9 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		// TODO Auto-generated method stub
 		return super.visitBoolExpr(ctx);
 	}
-	
-	//-----------Terminal expressions-----------
-	
+
+	// -----------Terminal expressions-----------
+
 	@Override
 	public Op visitIdExpr(IdExprContext ctx) {
 		// TODO Auto-generated method stub
@@ -282,6 +308,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		// TODO Auto-generated method stub
 		return super.visitNumExpr(ctx);
 	}
+
 	@Override
 	public Op visitCharExpr(CharExprContext ctx) {
 		// TODO Auto-generated method stub
@@ -293,13 +320,13 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		// TODO Auto-generated method stub
 		return super.visitStringExpr(ctx);
 	}
-	
+
 	@Override
 	public Op visitTrueExpr(TrueExprContext ctx) {
 		// TODO Auto-generated method stub
 		return super.visitTrueExpr(ctx);
 	}
-	
+
 	@Override
 	public Op visitFalseExpr(FalseExprContext ctx) {
 		// TODO Auto-generated method stub
