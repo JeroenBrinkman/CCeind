@@ -2,6 +2,8 @@ package generator;
 
 import java.util.ArrayList;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+
 /**
  * Manages register usage. Limits the maximum amount of registers to MAXREG.
  * getOrReserveRegister is the recommended method for reserving variables.
@@ -16,12 +18,12 @@ public class RegisterManager {
 	 */
 	private class Register implements Comparable<Register> {
 		public int number;
-		public String id;
+		public ParseTree ctx;
 		public boolean constant = false;
 
-		public Register(int number, String id) {
+		public Register(int number, ParseTree ctx) {
 			this.number = number;
-			this.id = id;
+			this.ctx = ctx;
 		}
 
 		@Override
@@ -49,9 +51,9 @@ public class RegisterManager {
 	 * Get an existing register for a variable that already has a register.
 	 * returns null if the variable has no register
 	 */
-	public String getReg(String id) {
+	private String getReg(ParseTree ctx) {
 		for (Register r : registers) {
-			if (r.id.equals(id)) {
+			if (r.ctx.equals(ctx)) {
 				return r.toString();
 			}
 		}
@@ -62,10 +64,10 @@ public class RegisterManager {
 	 * Gets the existing register for a variable or reserves a new register if
 	 * this does not exist.
 	 */
-	public String getOrReserveReg(String id) {
-		String reg = getReg(id);
+	public String getOrReserveReg(ParseTree ctx) {
+		String reg = getReg(ctx);
 		if (reg == null) {
-			reg = reserveReg(id);
+			reg = reserveReg(ctx);
 		}
 		return reg;
 	}
@@ -73,12 +75,12 @@ public class RegisterManager {
 	/**
 	 * Reserve a new register for a variable.
 	 */
-	public String reserveReg(String id) {
+	private String reserveReg(ParseTree ctx) {
 		Register r = null;
 		for (int i = 0; i < MAXREG; i++) {
 			r = registers.get(i);
-			if (r.id == null && !r.constant) {
-				r.id = id;
+			if (r.ctx == null && !r.constant) {
+				r.ctx = ctx;
 				break;
 			}
 		}
@@ -90,18 +92,18 @@ public class RegisterManager {
 	/**
 	 * Free a register for a variable.
 	 */
-	public void freeReg(String id, boolean constant) {
+	public void freeReg(ParseTree ctx, String name, boolean constant) {
 		if (constant) {
 			for (Register r : registers) {
-				if (r.id.equals(id) && r.constant == constant) {
-					r.id = null;
+				if (r.ctx.equals(ctx) && r.constant == constant) {
+					r.ctx = null;
 					return;
 				}
 			}
 		} else {
 			for (Register r : registers) {
-				if (r.toString().equals(id) && r.constant == constant) {
-					r.id = null;
+				if (r.toString().equals(name) && r.constant == constant) {
+					r.ctx = null;
 					r.constant = false;
 				}
 			}
@@ -112,8 +114,7 @@ public class RegisterManager {
 		Register r = null;
 		for (int i = 0; i < MAXREG; i++) {
 			r = registers.get(i);
-			if (r.id == null && !r.constant) {
-				r.id = r.toString();
+			if (r.ctx == null && !r.constant) {
 				r.constant = true;
 				return r.toString();
 			}
