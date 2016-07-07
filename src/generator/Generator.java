@@ -49,7 +49,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		if (closeScope) {
 			mM.closeScope();
 		}
-		int parentoff = mM.getOffset(to, stringData[0]);
+		int parentoff = mM.getOffset(to, stringData[0], null);
 		Reg helpreg = new Reg(mM.getConstReg());
 
 		// MOVE ALL CHARS
@@ -125,6 +125,17 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		return new Label(result);
 	}
 
+	private Num offset(ParseTree node, String id) {
+		int size = 0;
+		if (checkResult.getType(node).equals(Type.INT)) {
+			size = Machine.INT_SIZE;
+		} else if (checkResult.getType(node).equals(Type.CHAR)) {
+			size = Machine.DEFAULT_CHAR_SIZE;
+		}
+		Num offset = new Num(mM.getOffset(node, size, id));
+		return offset;
+	}
+	
 	private Num offset(ParseTree node) {
 		int size = 0;
 		if (checkResult.getType(node).equals(Type.INT)) {
@@ -132,7 +143,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		} else if (checkResult.getType(node).equals(Type.CHAR)) {
 			size = Machine.DEFAULT_CHAR_SIZE;
 		}
-		Num offset = new Num(mM.getOffset(node, size));
+		Num offset = new Num(mM.getOffset(node, size, null));
 		return offset;
 	}
 
@@ -147,7 +158,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		 * offset(node), reg); } else { emit(OpCode.loadAI, arp, offset(node),
 		 * reg); } // TODO extend for booleans, Strings } else {
 		 */
-		reg = new Reg(mM.getVarReg(node));
+		reg = new Reg(mM.getNodeReg(node));
 		// }
 
 		return reg;
@@ -168,7 +179,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	@Override
 	public Op visitIdTarget(IdTargetContext ctx) {
-		emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
+		emit(OpCode.storeAI, reg(ctx), arp, offset(ctx, ctx.ID().getText()));
 		return null;
 	}
 
@@ -323,7 +334,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	public Op visitDeclExpr(DeclExprContext ctx) {
 		if (ctx.expr() != null) {
 			visit(ctx.expr());
-			emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID()));
+			emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID(), ctx.ID().getText()));
 		}
 		return null;
 	}
@@ -344,7 +355,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	@Override
 	public Op visitAssExpr(AssExprContext ctx) {
 		visit(ctx.expr());
-		emit(OpCode.storeAI, reg(ctx.expr()), this.arp, offset(ctx.target()));
+		emit(OpCode.storeAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
 		return null;
 	}
 
@@ -365,7 +376,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	@Override
 	public Op visitIdExpr(IdExprContext ctx) {
-		emit(OpCode.loadAI, this.arp, offset(ctx), reg(ctx));
+		emit(OpCode.loadAI, this.arp, offset(ctx, ctx.ID().getText()), reg(ctx));
 		return null;
 	}
 
