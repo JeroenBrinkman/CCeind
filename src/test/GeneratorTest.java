@@ -7,7 +7,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Test;
+
 
 
 
@@ -60,6 +62,11 @@ public class GeneratorTest {
 		System.out.println(prog.prettyPrint());
 		String out = sim(prog, "");
 		System.out.println(out);
+		String[] values = out.trim().split("\n");
+		//assertEquals("a*b: 20", values[0]);
+		//assertEquals("c: 20", values[1]);
+		//assertEquals("d: 1", values[2]);
+		assertEquals("e: 2", values[3]);
 	}
 	private Program compile(String filename) throws IOException, ParseException {
 		return this.compiler.compile(new File(BASE_DIR, filename + EXT));

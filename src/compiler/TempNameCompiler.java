@@ -118,7 +118,6 @@ public class TempNameCompiler {
 		parser.removeErrorListeners();
 		parser.addErrorListener(listener);
 		ParseTree result = parser.program();
-		System.out.println(result.toString());
 		listener.throwException();
 		return result;
 	}
