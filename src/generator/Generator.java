@@ -13,8 +13,6 @@ import checker.Type;
 import grammar.TempNameBaseVisitor;
 import grammar.TempNameParser.*;
 
-
-
 public class Generator extends TempNameBaseVisitor<Op> {
 	/** The representation of the boolean value <code>false</code>. */
 	public final static Num FALSE_VALUE = new Num(Simulator.FALSE);
@@ -139,18 +137,15 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		Reg reg;
 		// IF the value is ONLY stored in memory, it should be loaded into the
 		// register before use
-		/**if (mM.hasMemory(node) && !mM.hasReg(node)) {
-			reg = new Reg(mM.getVarReg(node));
-			Type elseType = checkResult.getType(node);
-			if (elseType.equals(Type.CHAR)) {
-				emit(OpCode.cloadAI, arp, offset(node), reg);
-			} else {
-				emit(OpCode.loadAI, arp, offset(node), reg);
-			}
-			// TODO extend for booleans, Strings
-		} else {*/
-			reg = new Reg(mM.getVarReg(node));
-		//}
+		/**
+		 * if (mM.hasMemory(node) && !mM.hasReg(node)) { reg = new
+		 * Reg(mM.getVarReg(node)); Type elseType = checkResult.getType(node);
+		 * if (elseType.equals(Type.CHAR)) { emit(OpCode.cloadAI, arp,
+		 * offset(node), reg); } else { emit(OpCode.loadAI, arp, offset(node),
+		 * reg); } // TODO extend for booleans, Strings } else {
+		 */
+		reg = new Reg(mM.getVarReg(node));
+		// }
 
 		return reg;
 	}
@@ -243,8 +238,9 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		visit(ctx.expr(last));
 		Reg lastReg = reg(ctx.expr(last));
 		System.out.println(ctx.expr(last).getText());
+		emit(OpCode.loadAI, arp, offset(ctx.expr(last)), reg(ctx));
 		mM.closeScope();
-		emit(OpCode.storeAI, lastReg, arp, offset(ctx));
+		emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
 		return null;
 	}
 
