@@ -58,10 +58,10 @@ public class Generator extends TempNameBaseVisitor<String> {
 			emit(OpCode.cstoreAI, helpreg, arp, new Num(i + parentoff));
 		}
 	}
-	
-	private String visitH(ParseTree ctx){
+
+	private String visitH(ParseTree ctx) {
 		String id0 = visit(ctx);
-		if(id0 != null){
+		if (id0 != null) {
 			emit(OpCode.loadAI, arp, offset(ctx, id0), reg(ctx));
 		}
 		return id0;
@@ -274,17 +274,30 @@ public class Generator extends TempNameBaseVisitor<String> {
 		for (int i = 0; i < ctx.expr().size() - 1; i++) {
 			visit(ctx.expr(i));
 		}
-		visit(ctx.expr(last));
-		if (checkResult.getType(ctx.expr(last)).equals(Type.CHAR)) {
-			emit(OpCode.cloadAI, arp, offset(ctx.expr(last)), reg(ctx));
-			mM.closeScope();
-			emit(OpCode.cstoreAI, reg(ctx), arp, offset(ctx));
-		} else if (checkResult.getType(ctx.expr(last)).equals(Type.STRING)) {
-			this.moveString(ctx.expr(last), ctx, true);
+		visitH(ctx.expr(last));
+		if (mM.hasMemory(ctx.expr(last))) {
+			if (checkResult.getType(ctx.expr(last)).equals(Type.CHAR)) {
+				emit(OpCode.cloadAI, arp, offset(ctx.expr(last)), reg(ctx));
+				mM.closeScope();
+				emit(OpCode.cstoreAI, reg(ctx), arp, offset(ctx));
+			} else if (checkResult.getType(ctx.expr(last)).equals(Type.STRING)) {
+				this.moveString(ctx.expr(last), ctx, true);
+			} else {
+				emit(OpCode.loadAI, arp, offset(ctx.expr(last)), reg(ctx));
+				mM.closeScope();
+				emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
+			}
 		} else {
-			emit(OpCode.loadAI, arp, offset(ctx.expr(last)), reg(ctx));
-			mM.closeScope();
-			emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
+			if (checkResult.getType(ctx.expr(last)).equals(Type.CHAR)) {
+				mM.closeScope();
+				emit(OpCode.cstoreAI, reg(ctx.expr(last)), arp, offset(ctx));
+			} else if (checkResult.getType(ctx.expr(last)).equals(Type.STRING)) {
+				// TODO illegal state?
+				this.moveString(ctx.expr(last), ctx, true);
+			} else {
+				mM.closeScope();
+				emit(OpCode.storeAI, reg(ctx.expr(last)), arp, offset(ctx));
+			}
 		}
 		return null;
 	}
@@ -337,8 +350,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 		visitH(ctx.expr(0));
 		emit(OpCode.nop);
 		visitH(ctx.expr(1));
-	
-		
+
 		if (ctx.plusOp().getText().equals("+")) {
 			emit(OpCode.add, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
 		} else {
@@ -364,7 +376,6 @@ public class Generator extends TempNameBaseVisitor<String> {
 	public String visitDeclExpr(DeclExprContext ctx) {
 		if (ctx.expr() != null) {
 			visitH(ctx.expr());
-
 
 			emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID(), ctx.ID().getText()));
 		}
