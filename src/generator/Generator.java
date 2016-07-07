@@ -61,26 +61,18 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	private void returnResult(ParseTree child, ParseTree parent) {
 		Type type = checkResult.getType(child);
-		if (mM.hasReg(child)) {
-			if (type.equals(Type.CHAR)) {
-				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
-			} else if (type.equals(Type.STRING)) {
-				// TODO is this case illegal?
-				moveString(child, parent, false);
-			} else {
-				emit(OpCode.storeAI, reg(child), arp, offset(parent));
-			}
-		} else if (mM.hasMemory(child)) {
-			if (type.equals(Type.CHAR)) {
-				emit(OpCode.cloadAI, arp, offset(child), reg(child));
-				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
-			} else if (type.equals(Type.STRING)) {
-				moveString(child, parent, false);
-			} else {
-				emit(OpCode.loadAI, arp, offset(child), reg(child));
-				emit(OpCode.storeAI, reg(child), arp, offset(parent));
-			}
+		System.out.println(child.getText() + " : " + mM.hasReg(child) + " " + mM.hasMemory(child) + " reg = "
+				+ reg(child).toString());
+
+		if (type.equals(Type.CHAR)) {
+			emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
+		} else if (type.equals(Type.STRING)) {
+			// TODO is this case illegal?
+			moveString(child, parent, false);
+		} else {
+			emit(OpCode.storeAI, reg(child), arp, offset(parent));
 		}
+
 	}
 
 	/**
@@ -135,7 +127,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		Num offset = new Num(mM.getOffset(node, size, id));
 		return offset;
 	}
-	
+
 	private Num offset(ParseTree node) {
 		int size = 0;
 		if (checkResult.getType(node).equals(Type.INT)) {
@@ -151,15 +143,18 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		Reg reg;
 		// IF the value is ONLY stored in memory, it should be loaded into the
 		// register before use
-		/**
-		 * if (mM.hasMemory(node) && !mM.hasReg(node)) { reg = new
-		 * Reg(mM.getVarReg(node)); Type elseType = checkResult.getType(node);
-		 * if (elseType.equals(Type.CHAR)) { emit(OpCode.cloadAI, arp,
-		 * offset(node), reg); } else { emit(OpCode.loadAI, arp, offset(node),
-		 * reg); } // TODO extend for booleans, Strings } else {
-		 */
-		reg = new Reg(mM.getNodeReg(node));
-		// }
+
+		if (mM.hasMemory(node) && !mM.hasReg(node)) {
+			reg = new Reg(mM.getNodeReg(node));
+			Type elseType = checkResult.getType(node);
+			if (elseType.equals(Type.CHAR)) {
+				emit(OpCode.cloadAI, arp, offset(node), reg);
+			} else {
+				emit(OpCode.loadAI, arp, offset(node), reg);
+			} // TODO extend for booleans, Strings } else {
+		} else {
+			reg = new Reg(mM.getNodeReg(node));
+		}
 
 		return reg;
 	}
@@ -355,7 +350,13 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	@Override
 	public Op visitAssExpr(AssExprContext ctx) {
 		visit(ctx.expr());
-		emit(OpCode.storeAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
+		if (checkResult.getType(ctx).equals(Type.CHAR)) {
+			emit(OpCode.cstoreAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
+		} else if (checkResult.getType(ctx).equals(Type.STRING)) {
+			moveString(ctx.expr(), ctx, false);
+		} else {
+			emit(OpCode.storeAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
+		}
 		return null;
 	}
 
@@ -388,13 +389,21 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	@Override
 	public Op visitCharExpr(CharExprContext ctx) {
-		// TODO bytecode to num?
+		int chara = (int) ctx.CHR().getText().charAt(1);
+		emit(OpCode.loadI, new Num(chara), reg(ctx));
 		return null;
 	}
 
 	@Override
 	public Op visitStringExpr(StringExprContext ctx) {
-		// TODO
+		String str = ctx.STR().getText();
+		str = str.substring(1, str.length() - 1);
+		int offset = mM.getOffset(ctx, Machine.DEFAULT_CHAR_SIZE * str.length(), null);
+		for (int i = 0; i < str.length(); i++) {
+			int chara = (int) str.charAt(i);
+			emit(OpCode.loadI, new Num(chara), reg(ctx));
+			emit(OpCode.cstoreAI, reg(ctx), arp, new Num(offset + i * Machine.DEFAULT_CHAR_SIZE));
+		}
 		return null;
 	}
 
