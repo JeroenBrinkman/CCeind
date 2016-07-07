@@ -50,19 +50,36 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		return this.prog;
 	}
 
+	private void moveString(ParseTree from, ParseTree to) {
+		// SETUP
+		int[] stringData = mM.getSizeAndOffset(from);
+		int parentoff = mM.getOffset(to, stringData[0]);
+		Reg helpreg = new Reg(mM.getConstReg());
+
+		// MOVE ALL CHARS
+		for (int i = 0; i < stringData[1]; i = i + Machine.DEFAULT_CHAR_SIZE) {
+			emit(OpCode.cloadAI, arp, new Num(i), helpreg);
+			emit(OpCode.cstoreAI, helpreg, arp, new Num(i + parentoff));
+		}
+	}
+
 	private void returnResult(ParseTree child, ParseTree parent) {
-		//TODO Catching booleans and strings
-		Type elseType = checkResult.getType(child);
+		Type type = checkResult.getType(child);
 		if (mM.hasReg(child)) {
-			if (elseType.equals(Type.CHAR)) {
+			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
+			} else if (type.equals(Type.STRING)) {
+				// TODO is this case illegal?
+				moveString(child, parent);
 			} else {
 				emit(OpCode.storeAI, reg(child), arp, offset(parent));
 			}
 		} else if (mM.hasMemory(child)) {
-			if (elseType.equals(Type.CHAR)) {
+			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cloadAI, arp, offset(child), reg(child));
 				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
+			} else if (type.equals(Type.STRING)) {
+				moveString(child, parent);
 			} else {
 				emit(OpCode.loadAI, arp, offset(child), reg(child));
 				emit(OpCode.storeAI, reg(child), arp, offset(parent));
@@ -237,17 +254,17 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	@Override
 	public Op visitPrintExpr(PrintExprContext ctx) {
-		if(ctx.expr().size() > 1){
+		if (ctx.expr().size() > 1) {
 			for (int i = 0; i < ctx.expr().size(); i++) {
 				visit(ctx.expr(i));
-				emit(OpCode.out, new Str(ctx.expr(i).getText() + ": " ), reg(ctx.expr(i)));
+				emit(OpCode.out, new Str(ctx.expr(i).getText() + ": "), reg(ctx.expr(i)));
 			}
-		}else{
+		} else {
 			visit(ctx.expr(0));
-			emit(OpCode.out, new Str(ctx.expr(0).getText() + ": " ), reg(ctx.expr(0)));
+			emit(OpCode.out, new Str(ctx.expr(0).getText() + ": "), reg(ctx.expr(0)));
 			returnResult(ctx.expr(0), ctx);
 		}
-		return null;	
+		return null;
 	}
 
 	@Override
@@ -261,13 +278,13 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		visit(ctx.expr(0));
 		visit(ctx.expr(1));
 		if (ctx.multOp().getText().equals("*")) {
-			//Times
+			// Times
 			emit(OpCode.mult, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
-		} else if(ctx.multOp().getText().equals("/")){
-			//Division
+		} else if (ctx.multOp().getText().equals("/")) {
+			// Division
 			emit(OpCode.div, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
-		}else{
-			//Modulo
+		} else {
+			// Modulo
 			String str1 = mM.getConstReg();
 			Reg r1 = new Reg(str1);
 			emit(OpCode.div, reg(ctx.expr(0)), reg(ctx.expr(1)), r1);
@@ -300,10 +317,10 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Op visitDeclExpr(DeclExprContext ctx) {
-		if(ctx.expr() != null){
+		if (ctx.expr() != null) {
 			visit(ctx.expr());
 			emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID()));
 		}
@@ -334,8 +351,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	public Op visitBoolExpr(BoolExprContext ctx) {
 		visit(ctx.expr(0));
 		visit(ctx.expr(1));
-		if (ctx.boolOp().getText().contains("o")
-				|| ctx.boolOp().getText().contains("O")) {
+		if (ctx.boolOp().getText().contains("o") || ctx.boolOp().getText().contains("O")) {
 			emit(OpCode.or, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
 		} else {
 			emit(OpCode.and, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
@@ -354,20 +370,19 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	@Override
 	public Op visitNumExpr(NumExprContext ctx) {
-		emit(OpCode.loadI, new Num(Integer.parseInt(ctx.NUM().getText())),
-				reg(ctx));
+		emit(OpCode.loadI, new Num(Integer.parseInt(ctx.NUM().getText())), reg(ctx));
 		return null;
 	}
 
 	@Override
 	public Op visitCharExpr(CharExprContext ctx) {
-		//TODO bytecode to num?
+		// TODO bytecode to num?
 		return null;
 	}
 
 	@Override
 	public Op visitStringExpr(StringExprContext ctx) {
-		// TODO 
+		// TODO
 		return null;
 	}
 
