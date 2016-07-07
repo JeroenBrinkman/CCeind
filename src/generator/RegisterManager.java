@@ -38,7 +38,7 @@ public class RegisterManager {
 	}
 
 	private final ArrayList<Register> registers = new ArrayList<Register>();
-	private static final int MAXREG = 75;
+	private static final int MAXREG = 30;
 
 	public RegisterManager() {
 		for (int i = 0; i < MAXREG; i++) {

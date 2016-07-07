@@ -13,7 +13,7 @@ import checker.Type;
 import grammar.TempNameBaseVisitor;
 import grammar.TempNameParser.*;
 
-public class Generator extends TempNameBaseVisitor<Op> {
+public class Generator extends TempNameBaseVisitor<String> {
 	/** The representation of the boolean value <code>false</code>. */
 	public final static Num FALSE_VALUE = new Num(Simulator.FALSE);
 	/** The representation of the boolean value <code>true</code>. */
@@ -59,20 +59,9 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		}
 	}
 
-	private void returnResult(ParseTree child, ParseTree parent) {
-		emit(OpCode.nop);
+	private void returnResult(ParseTree child, ParseTree parent, String id) {
 		Type type = checkResult.getType(child);
-		/**
-		 * if (type.equals(Type.CHAR)) { emit(OpCode.cstoreAI, reg(child), arp,
-		 * offset(parent)); } else if (type.equals(Type.STRING)) { // TODO is
-		 * this case illegal? moveString(child, parent, false); } else {
-		 * emit(OpCode.storeAI, reg(child), arp, offset(parent)); }
-		 */
-
 		if (mM.hasReg(child)) {
-			System.out.println("child!! : " +child.getText() + " hasReg " + mM.hasReg(child));
-			System.out.println(mM.toString());
-			System.out.println("case 1");
 			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
 			} else if (type.equals(Type.STRING)) {
@@ -82,7 +71,6 @@ public class Generator extends TempNameBaseVisitor<Op> {
 				emit(OpCode.storeAI, reg(child), arp, offset(parent));
 			}
 		} else if (mM.hasMemory(child)) {
-			System.out.println("case 2");
 			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cloadAI, arp, offset(child), reg(child));
 				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
@@ -92,6 +80,18 @@ public class Generator extends TempNameBaseVisitor<Op> {
 				emit(OpCode.loadAI, arp, offset(child), reg(child));
 				emit(OpCode.storeAI, reg(child), arp, offset(parent));
 			}
+		} else if (id != null) {
+			if (type.equals(Type.CHAR)) {
+				emit(OpCode.cloadAI, arp, offset(child, id), reg(parent));
+				emit(OpCode.cstoreAI, reg(parent), arp, offset(parent));
+			} else if (type.equals(Type.STRING)) {
+				moveString(child, parent, false);
+			} else {
+				emit(OpCode.loadAI, arp, offset(child, id), reg(parent));
+				emit(OpCode.storeAI, reg(parent), arp, offset(parent));
+			}
+		} else {
+			// TODO error, illegal state
 		}
 	}
 
@@ -183,7 +183,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	// -----------Program-----------
 
 	@Override
-	public Op visitProgram(ProgramContext ctx) {
+	public String visitProgram(ProgramContext ctx) {
 		emit(new Label("Program"), OpCode.nop);
 		mM.openScope();
 		visit(ctx.expr());
@@ -194,22 +194,22 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	// -----------Target-----------
 
 	@Override
-	public Op visitIdTarget(IdTargetContext ctx) {
+	public String visitIdTarget(IdTargetContext ctx) {
 		emit(OpCode.storeAI, reg(ctx), arp, offset(ctx, ctx.ID().getText()));
-		return null;
+		return ctx.ID().getText();
 	}
 
 	// -----------Expression-----------
 
 	@Override
-	public Op visitParExpr(ParExprContext ctx) {
+	public String visitParExpr(ParExprContext ctx) {
 		visit(ctx.expr());
 		emit(OpCode.i2i, reg(ctx.expr()), reg(ctx));
 		return null;
 	}
 
 	@Override
-	public Op visitCompExpr(CompExprContext ctx) {
+	public String visitCompExpr(CompExprContext ctx) {
 		visit(ctx.expr(0));
 		visit(ctx.expr(1));
 		String compOp = ctx.compOp().getText();
@@ -238,7 +238,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	@Override
-	public Op visitIfExpr(IfExprContext ctx) {
+	public String visitIfExpr(IfExprContext ctx) {
 		visit(ctx.expr(0));
 		Label endIf = createLabel(ctx, "endIf");
 
@@ -247,20 +247,21 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		emit(OpCode.cbr, reg(ctx.expr(0)), label(ctx.expr(1)), elsez);
 		emit(label(ctx.expr(1)), OpCode.nop);
 
-		visit(ctx.expr(1));
-		returnResult(ctx.expr(1), ctx);
+		String id = visit(ctx.expr(1));
+		returnResult(ctx.expr(1), ctx, id);
 		emit(OpCode.jumpI, endIf);
 		if (elseExists) {
 			emit(elsez, OpCode.nop);
-			visit(ctx.expr(2));
-			returnResult(ctx.expr(2), ctx);
+			id = visit(ctx.expr(2));
+
+			returnResult(ctx.expr(2), ctx, id);
 		}
 		emit(endIf, OpCode.nop);
 		return null;
 	}
 
 	@Override
-	public Op visitBlockExpr(BlockExprContext ctx) {
+	public String visitBlockExpr(BlockExprContext ctx) {
 		int last = ctx.expr().size() - 1;
 		mM.openScope();
 		for (int i = 0; i < ctx.expr().size() - 1; i++) {
@@ -282,28 +283,28 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	@Override
-	public Op visitPrintExpr(PrintExprContext ctx) {
+	public String visitPrintExpr(PrintExprContext ctx) {
 		if (ctx.expr().size() > 1) {
 			for (int i = 0; i < ctx.expr().size(); i++) {
 				visit(ctx.expr(i));
 				emit(OpCode.out, new Str(ctx.expr(i).getText() + ": "), reg(ctx.expr(i)));
 			}
 		} else {
-			visit(ctx.expr(0));
+			String id = visit(ctx.expr(0));
 			emit(OpCode.out, new Str(ctx.expr(0).getText() + ": "), reg(ctx.expr(0)));
-			returnResult(ctx.expr(0), ctx);
+			returnResult(ctx.expr(0), ctx, id);
 		}
 		return null;
 	}
 
 	@Override
-	public Op visitReadExpr(ReadExprContext ctx) {
+	public String visitReadExpr(ReadExprContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Op visitMultExpr(MultExprContext ctx) {
+	public String visitMultExpr(MultExprContext ctx) {
 		visit(ctx.expr(0));
 		visit(ctx.expr(1));
 		if (ctx.multOp().getText().equals("*")) {
@@ -324,9 +325,15 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	@Override
-	public Op visitPlusExpr(PlusExprContext ctx) {
-		visit(ctx.expr(0));
-		visit(ctx.expr(1));
+	public String visitPlusExpr(PlusExprContext ctx) {
+		String id0 = visit(ctx.expr(0));
+		String id1 = visit(ctx.expr(1));
+		if(id0 != null){
+			emit(OpCode.loadAI, arp, offset(ctx.expr(0), id0), reg(ctx.expr(0)));
+		}
+		if(id1 != null){
+			emit(OpCode.loadAI, arp, offset(ctx.expr(1), id1), reg(ctx.expr(1)));
+		}
 		if (ctx.plusOp().getText().equals("+")) {
 			emit(OpCode.add, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
 		} else {
@@ -336,7 +343,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	@Override
-	public Op visitPrfExpr(PrfExprContext ctx) {
+	public String visitPrfExpr(PrfExprContext ctx) {
 		visit(ctx.expr());
 		if (ctx.prfOp().getText().equals("-")) {
 			emit(OpCode.rsubI, reg(ctx.expr()), new Num(0), reg(ctx));
@@ -348,16 +355,16 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	@Override
-	public Op visitDeclExpr(DeclExprContext ctx) {
+	public String visitDeclExpr(DeclExprContext ctx) {
 		if (ctx.expr() != null) {
 			visit(ctx.expr());
 			emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID(), ctx.ID().getText()));
 		}
-		return null;
+		return ctx.ID().getText();
 	}
 
 	@Override
-	public Op visitWhileExpr(WhileExprContext ctx) {
+	public String visitWhileExpr(WhileExprContext ctx) {
 		emit(label(ctx), OpCode.nop);
 		visit(ctx.expr(0));
 		Label endLabel = createLabel(ctx, "end");
@@ -370,7 +377,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	@Override
-	public Op visitAssExpr(AssExprContext ctx) {
+	public String visitAssExpr(AssExprContext ctx) {
 		visit(ctx.expr());
 		if (checkResult.getType(ctx).equals(Type.CHAR)) {
 			emit(OpCode.cstoreAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
@@ -379,11 +386,11 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		} else {
 			emit(OpCode.storeAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
 		}
-		return null;
+		return ctx.target().getText();
 	}
 
 	@Override
-	public Op visitBoolExpr(BoolExprContext ctx) {
+	public String visitBoolExpr(BoolExprContext ctx) {
 		visit(ctx.expr(0));
 		visit(ctx.expr(1));
 		if (ctx.boolOp().getText().contains("o") || ctx.boolOp().getText().contains("O")) {
@@ -398,26 +405,26 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	// -----------Terminal expressions-----------
 
 	@Override
-	public Op visitIdExpr(IdExprContext ctx) {
+	public String visitIdExpr(IdExprContext ctx) {
 		emit(OpCode.loadAI, this.arp, offset(ctx, ctx.ID().getText()), reg(ctx));
 		return null;
 	}
 
 	@Override
-	public Op visitNumExpr(NumExprContext ctx) {
+	public String visitNumExpr(NumExprContext ctx) {
 		emit(OpCode.loadI, new Num(Integer.parseInt(ctx.NUM().getText())), reg(ctx));
 		return null;
 	}
 
 	@Override
-	public Op visitCharExpr(CharExprContext ctx) {
+	public String visitCharExpr(CharExprContext ctx) {
 		int chara = (int) ctx.CHR().getText().charAt(1);
 		emit(OpCode.loadI, new Num(chara), reg(ctx));
 		return null;
 	}
 
 	@Override
-	public Op visitStringExpr(StringExprContext ctx) {
+	public String visitStringExpr(StringExprContext ctx) {
 		String str = ctx.STR().getText();
 		str = str.substring(1, str.length() - 1);
 		int offset = mM.getOffset(ctx, Machine.DEFAULT_CHAR_SIZE * str.length(), null);
@@ -430,13 +437,13 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	@Override
-	public Op visitTrueExpr(TrueExprContext ctx) {
+	public String visitTrueExpr(TrueExprContext ctx) {
 		emit(OpCode.loadI, TRUE_VALUE, reg(ctx));
 		return null;
 	}
 
 	@Override
-	public Op visitFalseExpr(FalseExprContext ctx) {
+	public String visitFalseExpr(FalseExprContext ctx) {
 		emit(OpCode.loadI, FALSE_VALUE, reg(ctx));
 		return null;
 	}
