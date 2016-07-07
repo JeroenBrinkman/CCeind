@@ -281,7 +281,7 @@ public class MemoryManager {
 	}
 
 	public boolean hasReg(ParseTree ctx) {
-		return regman.getReg(ctx) == null;
+		return regman.getReg(ctx) != null;
 	}
 
 	@Override

@@ -60,6 +60,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 	}
 
 	private void returnResult(ParseTree child, ParseTree parent) {
+		emit(OpCode.nop);
 		Type type = checkResult.getType(child);
 		/**
 		 * if (type.equals(Type.CHAR)) { emit(OpCode.cstoreAI, reg(child), arp,
@@ -69,6 +70,9 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		 */
 
 		if (mM.hasReg(child)) {
+			System.out.println("child!! : " +child.getText() + " hasReg " + mM.hasReg(child));
+			System.out.println(mM.toString());
+			System.out.println("case 1");
 			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
 			} else if (type.equals(Type.STRING)) {
@@ -78,6 +82,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 				emit(OpCode.storeAI, reg(child), arp, offset(parent));
 			}
 		} else if (mM.hasMemory(child)) {
+			System.out.println("case 2");
 			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cloadAI, arp, offset(child), reg(child));
 				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
