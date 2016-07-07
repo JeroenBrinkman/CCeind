@@ -95,7 +95,7 @@ public class RegisterManager {
 	public void freeReg(ParseTree ctx, String name, boolean constant) {
 		if (constant) {
 			for (Register r : registers) {
-				if (r.ctx.equals(ctx) && r.constant == constant) {
+				if (r.ctx != null && r.ctx.equals(ctx) && r.constant == constant) {
 					r.ctx = null;
 					return;
 				}
