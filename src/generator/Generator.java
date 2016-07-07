@@ -58,6 +58,14 @@ public class Generator extends TempNameBaseVisitor<String> {
 			emit(OpCode.cstoreAI, helpreg, arp, new Num(i + parentoff));
 		}
 	}
+	
+	private String visitH(ParseTree ctx){
+		String id0 = visit(ctx);
+		if(id0 != null){
+			emit(OpCode.loadAI, arp, offset(ctx, id0), reg(ctx));
+		}
+		return id0;
+	}
 
 	private void returnResult(ParseTree child, ParseTree parent, String id) {
 		Type type = checkResult.getType(child);
@@ -203,15 +211,15 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitParExpr(ParExprContext ctx) {
-		visit(ctx.expr());
+		visitH(ctx.expr());
 		emit(OpCode.i2i, reg(ctx.expr()), reg(ctx));
 		return null;
 	}
 
 	@Override
 	public String visitCompExpr(CompExprContext ctx) {
-		visit(ctx.expr(0));
-		visit(ctx.expr(1));
+		visitH(ctx.expr(0));
+		visitH(ctx.expr(1));
 		String compOp = ctx.compOp().getText();
 		switch (compOp) {
 		case ("<="):
@@ -239,7 +247,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitIfExpr(IfExprContext ctx) {
-		visit(ctx.expr(0));
+		visitH(ctx.expr(0));
 		Label endIf = createLabel(ctx, "endIf");
 
 		boolean elseExists = ctx.expr(2) != null;
@@ -286,7 +294,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 	public String visitPrintExpr(PrintExprContext ctx) {
 		if (ctx.expr().size() > 1) {
 			for (int i = 0; i < ctx.expr().size(); i++) {
-				visit(ctx.expr(i));
+				visitH(ctx.expr(i));
 				emit(OpCode.out, new Str(ctx.expr(i).getText() + ": "), reg(ctx.expr(i)));
 			}
 		} else {
@@ -305,8 +313,8 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitMultExpr(MultExprContext ctx) {
-		visit(ctx.expr(0));
-		visit(ctx.expr(1));
+		visitH(ctx.expr(0));
+		visitH(ctx.expr(1));
 		if (ctx.multOp().getText().equals("*")) {
 			// Times
 			emit(OpCode.mult, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
@@ -326,14 +334,10 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitPlusExpr(PlusExprContext ctx) {
-		String id0 = visit(ctx.expr(0));
-		String id1 = visit(ctx.expr(1));
-		if(id0 != null){
-			emit(OpCode.loadAI, arp, offset(ctx.expr(0), id0), reg(ctx.expr(0)));
-		}
-		if(id1 != null){
-			emit(OpCode.loadAI, arp, offset(ctx.expr(1), id1), reg(ctx.expr(1)));
-		}
+		visitH(ctx.expr(0));
+		visitH(ctx.expr(1));
+	
+		
 		if (ctx.plusOp().getText().equals("+")) {
 			emit(OpCode.add, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
 		} else {
@@ -344,7 +348,8 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitPrfExpr(PrfExprContext ctx) {
-		visit(ctx.expr());
+		visitH(ctx.expr());
+
 		if (ctx.prfOp().getText().equals("-")) {
 			emit(OpCode.rsubI, reg(ctx.expr()), new Num(0), reg(ctx));
 		} else {
@@ -357,7 +362,9 @@ public class Generator extends TempNameBaseVisitor<String> {
 	@Override
 	public String visitDeclExpr(DeclExprContext ctx) {
 		if (ctx.expr() != null) {
-			visit(ctx.expr());
+			visitH(ctx.expr());
+
+
 			emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID(), ctx.ID().getText()));
 		}
 		return ctx.ID().getText();
@@ -366,11 +373,11 @@ public class Generator extends TempNameBaseVisitor<String> {
 	@Override
 	public String visitWhileExpr(WhileExprContext ctx) {
 		emit(label(ctx), OpCode.nop);
-		visit(ctx.expr(0));
+		visitH(ctx.expr(0));
 		Label endLabel = createLabel(ctx, "end");
 		emit(OpCode.cbr, reg(ctx.expr(0)), label(ctx.expr(1)), endLabel);
 		emit(label(ctx.expr(1)), OpCode.nop);
-		visit(ctx.expr(1));
+		visitH(ctx.expr(1));
 		emit(OpCode.jumpI, label(ctx));
 		emit(endLabel, OpCode.nop);
 		return null;
@@ -378,7 +385,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitAssExpr(AssExprContext ctx) {
-		visit(ctx.expr());
+		visitH(ctx.expr());
 		if (checkResult.getType(ctx).equals(Type.CHAR)) {
 			emit(OpCode.cstoreAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
 		} else if (checkResult.getType(ctx).equals(Type.STRING)) {
@@ -391,8 +398,8 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitBoolExpr(BoolExprContext ctx) {
-		visit(ctx.expr(0));
-		visit(ctx.expr(1));
+		visitH(ctx.expr(0));
+		visitH(ctx.expr(1));
 		if (ctx.boolOp().getText().contains("o") || ctx.boolOp().getText().contains("O")) {
 			emit(OpCode.or, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
 		} else {
