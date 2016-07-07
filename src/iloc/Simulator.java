@@ -370,7 +370,7 @@ public class Simulator {
 		StringBuilder result = new StringBuilder();
 		int len = pop();
 		for (int i = 0; i < len; i++) {
-			result.append(this.vm.getCharSize() <= 2 ? (char) popC() : popC());
+			result.append((char) popC());
 		}
 		return result.toString();
 	}
