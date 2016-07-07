@@ -43,9 +43,12 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		return this.prog;
 	}
 
-	private void moveString(ParseTree from, ParseTree to) {
+	private void moveString(ParseTree from, ParseTree to, boolean closeScope) {
 		// SETUP
 		int[] stringData = mM.getSizeAndOffset(from);
+		if (closeScope) {
+			mM.closeScope();
+		}
 		int parentoff = mM.getOffset(to, stringData[0]);
 		Reg helpreg = new Reg(mM.getConstReg());
 
@@ -63,7 +66,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
 			} else if (type.equals(Type.STRING)) {
 				// TODO is this case illegal?
-				moveString(child, parent);
+				moveString(child, parent, false);
 			} else {
 				emit(OpCode.storeAI, reg(child), arp, offset(parent));
 			}
@@ -72,7 +75,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 				emit(OpCode.cloadAI, arp, offset(child), reg(child));
 				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
 			} else if (type.equals(Type.STRING)) {
-				moveString(child, parent);
+				moveString(child, parent, false);
 			} else {
 				emit(OpCode.loadAI, arp, offset(child), reg(child));
 				emit(OpCode.storeAI, reg(child), arp, offset(parent));
@@ -236,11 +239,17 @@ public class Generator extends TempNameBaseVisitor<Op> {
 			visit(ctx.expr(i));
 		}
 		visit(ctx.expr(last));
-		Reg lastReg = reg(ctx.expr(last));
-		System.out.println(ctx.expr(last).getText());
-		emit(OpCode.loadAI, arp, offset(ctx.expr(last)), reg(ctx));
-		mM.closeScope();
-		emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
+		if (checkResult.getType(ctx.expr(last)).equals(Type.CHAR)) {
+			emit(OpCode.cloadAI, arp, offset(ctx.expr(last)), reg(ctx));
+			mM.closeScope();
+			emit(OpCode.cstoreAI, reg(ctx), arp, offset(ctx));
+		} else if (checkResult.getType(ctx.expr(last)).equals(Type.STRING)) {
+			this.moveString(ctx.expr(last), ctx, true);
+		} else {
+			emit(OpCode.loadAI, arp, offset(ctx.expr(last)), reg(ctx));
+			mM.closeScope();
+			emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
+		}
 		return null;
 	}
 
