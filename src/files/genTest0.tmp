@@ -7,7 +7,7 @@ start {
 	if a >= b then 
 		d := 1
 	else d := 0;
-	print(a,b,c,d);
+	print(d);
 	integer e := {
 		1 + 4;
 		30 % 6;

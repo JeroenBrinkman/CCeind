@@ -13,7 +13,7 @@ target
 
 /** Expression. */
 expr: type ID (ASS expr)? 					#declExpr
-	| <assoc= right >target ASS expr		#assExpr
+	| target (ASS expr)						#assExpr
     | IF expr THEN expr (ELSE expr)? 		#ifExpr
     | WHILE expr DO expr             		#whileExpr
     | READ LPAR ID (COMMA ID)* RPAR			#readExpr

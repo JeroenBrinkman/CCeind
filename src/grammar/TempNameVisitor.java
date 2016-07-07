@@ -182,19 +182,19 @@ public interface TempNameVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitWhileExpr(@NotNull TempNameParser.WhileExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code assExpr}
-	 * labeled alternative in {@link TempNameParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssExpr(@NotNull TempNameParser.AssExprContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code prfExpr}
 	 * labeled alternative in {@link TempNameParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitPrfExpr(@NotNull TempNameParser.PrfExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code assExpr}
+	 * labeled alternative in {@link TempNameParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssExpr(@NotNull TempNameParser.AssExprContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TempNameParser#prfOp}.
 	 * @param ctx the parse tree
