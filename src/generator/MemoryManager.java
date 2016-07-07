@@ -93,10 +93,32 @@ public class MemoryManager {
 	public int getOffset(ParseTree ctx, int size) {
 		for (Block b : memory) {
 			if (b.ctx.equals(ctx)) {
-				return b.start;
+				if (b.size == size) {
+					return b.start;
+				} else {
+					this.freeMemory(ctx);
+					return reserveMemory(ctx, size);
+				}
 			}
 		}
 		return reserveMemory(ctx, size);
+	}
+
+	/**
+	 * Returns the offset and size of an object in memory
+	 * 
+	 * @requires hasMemory(ctx)
+	 */
+	public int[] getSizeAndOffset(ParseTree ctx) {
+		int[] out = new int[2];
+		for (Block b : memory) {
+			if (b.ctx.equals(ctx)) {
+				out[0] = b.size;
+				out[1] = b.start;
+				return out;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -168,8 +190,8 @@ public class MemoryManager {
 		conScopes.getFirst().add(reg);
 		return reg;
 	}
-	
-	public boolean hasReg(ParseTree ctx){
-		return regman.getReg(ctx)== null;
+
+	public boolean hasReg(ParseTree ctx) {
+		return regman.getReg(ctx) == null;
 	}
 }
