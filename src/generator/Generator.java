@@ -364,8 +364,6 @@ public class Generator extends TempNameBaseVisitor<String> {
 	public String visitDeclExpr(DeclExprContext ctx) {
 		if (ctx.expr() != null) {
 			visitH(ctx.expr());
-
-
 			emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID(), ctx.ID().getText()));
 		}
 		return ctx.ID().getText();
