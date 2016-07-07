@@ -44,6 +44,15 @@ public class GeneratorTest {
 		assertEquals("c: 20", out.trim());
 	}
 
+	@Test
+	public void test2() throws IOException, ParseException {
+		Program prog = compile("test2");
+		System.out.println(prog.prettyPrint());
+		String out = sim(prog, "");
+		System.out.println(out);
+		//assertEquals("c: 20", out.trim());
+	}
+	
 	private Program compile(String filename) throws IOException, ParseException {
 		return this.compiler.compile(new File(BASE_DIR, filename + EXT));
 	}

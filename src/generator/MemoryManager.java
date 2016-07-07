@@ -38,6 +38,18 @@ public class MemoryManager {
 		public int compareTo(Block arg0) {
 			return this.start - ((Block) arg0).start;
 		}
+
+		@Override
+		public String toString() {
+			String out = "";
+			out = out + "\t--------------\n";
+			out = out + "\tstart = \t" + start + "\n";
+			out = out + "\tsize = \t" + size + "\n";
+			out = out + "\tid = \t" + id + "\n";
+			out = out + "\tstart = \t" + ctx.getText() + "\n";
+			out = out + "\t--------------";
+			return out;
+		}
 	}
 
 	private final Deque<ArrayList<ParseTree>> nodeScopes = new ArrayDeque<ArrayList<ParseTree>>();
@@ -270,5 +282,15 @@ public class MemoryManager {
 
 	public boolean hasReg(ParseTree ctx) {
 		return regman.getReg(ctx) == null;
+	}
+
+	@Override
+	public String toString() {
+		String out = "Memory model:\n";
+		for (Block b : memory) {
+			out = out + b.toString();
+		}
+		out = out +"\n"+  regman.toString();
+		return out;
 	}
 }

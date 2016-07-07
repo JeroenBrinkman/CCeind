@@ -35,7 +35,6 @@ public class RegisterManager {
 		public int compareTo(Register arg0) {
 			return this.number - arg0.number;
 		}
-
 	}
 
 	private final ArrayList<Register> registers = new ArrayList<Register>();
@@ -53,7 +52,7 @@ public class RegisterManager {
 	 */
 	public String getReg(ParseTree ctx) {
 		for (Register r : registers) {
-			
+
 			if (r.ctx != null && r.ctx.equals(ctx)) {
 				return r.toString();
 			}
@@ -123,5 +122,13 @@ public class RegisterManager {
 		// TODO throw out of registers exception?
 		// Should we even limit registers?
 		return r.toString();
+	}
+
+	public String toString() {
+		String out = "Registers : \n";
+		for (Register r : registers) {
+			out = out + r.toString() + " " + (r.constant ? "constant" : (r.ctx == null ? "null" : r.ctx.getText()) + "\n");
+		}
+		return out;
 	}
 }

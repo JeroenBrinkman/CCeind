@@ -61,18 +61,33 @@ public class Generator extends TempNameBaseVisitor<Op> {
 
 	private void returnResult(ParseTree child, ParseTree parent) {
 		Type type = checkResult.getType(child);
-		System.out.println(child.getText() + " : " + mM.hasReg(child) + " " + mM.hasMemory(child) + " reg = "
-				+ reg(child).toString());
+		/**
+		 * if (type.equals(Type.CHAR)) { emit(OpCode.cstoreAI, reg(child), arp,
+		 * offset(parent)); } else if (type.equals(Type.STRING)) { // TODO is
+		 * this case illegal? moveString(child, parent, false); } else {
+		 * emit(OpCode.storeAI, reg(child), arp, offset(parent)); }
+		 */
 
-		if (type.equals(Type.CHAR)) {
-			emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
-		} else if (type.equals(Type.STRING)) {
-			// TODO is this case illegal?
-			moveString(child, parent, false);
-		} else {
-			emit(OpCode.storeAI, reg(child), arp, offset(parent));
+		if (mM.hasReg(child)) {
+			if (type.equals(Type.CHAR)) {
+				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
+			} else if (type.equals(Type.STRING)) {
+				// TODO is this case illegal?
+				moveString(child, parent, false);
+			} else {
+				emit(OpCode.storeAI, reg(child), arp, offset(parent));
+			}
+		} else if (mM.hasMemory(child)) {
+			if (type.equals(Type.CHAR)) {
+				emit(OpCode.cloadAI, arp, offset(child), reg(child));
+				emit(OpCode.cstoreAI, reg(child), arp, offset(parent));
+			} else if (type.equals(Type.STRING)) {
+				moveString(child, parent, false);
+			} else {
+				emit(OpCode.loadAI, arp, offset(child), reg(child));
+				emit(OpCode.storeAI, reg(child), arp, offset(parent));
+			}
 		}
-
 	}
 
 	/**
@@ -145,6 +160,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		// register before use
 
 		if (mM.hasMemory(node) && !mM.hasReg(node)) {
+			System.out.println("asfdasfd");
 			reg = new Reg(mM.getNodeReg(node));
 			Type elseType = checkResult.getType(node);
 			if (elseType.equals(Type.CHAR)) {
@@ -225,6 +241,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		Label elsez = elseExists ? label(ctx.expr(2)) : endIf;
 		emit(OpCode.cbr, reg(ctx.expr(0)), label(ctx.expr(1)), elsez);
 		emit(label(ctx.expr(1)), OpCode.nop);
+
 		visit(ctx.expr(1));
 		returnResult(ctx.expr(1), ctx);
 		emit(OpCode.jumpI, endIf);
