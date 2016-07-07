@@ -20,6 +20,7 @@ public class CheckerTest {
 
 	@Test
 	public void test0() throws ParseException, IOException {
+		System.out.println("----Test 0----");
 		ParseTree tree = parse("test0");
 		Result result = check(tree);
 		ParseTree assX = tree.getChild(1).getChild(3);
@@ -33,12 +34,13 @@ public class CheckerTest {
 	
 	@Test
 	public void test1() throws ParseException, IOException {
+		System.out.println("----Test 1----");
 		ParseTree tree = parse("test1");
 		System.out.println(tree.toStringTree());
 		Result result = check(tree);
 		ParseTree a = tree.getChild(1).getChild(1);
 		System.out.println(a.getText());
-		assertEquals(Type.VOID, result.getType(a));
+		assertEquals(Type.INT, result.getType(a));
 		assertEquals(Type.INT, result.getType(a.getChild(3)));
 		ParseTree print = tree.getChild(1).getChild(7);
 		assertEquals(Type.INT, result.getType(print.getChild(2))); 
@@ -47,6 +49,7 @@ public class CheckerTest {
 
 	@Test
 	public void test2() throws ParseException, IOException {
+		System.out.println("----Test 2----");
 		ParseTree tree = parse("test2");
 		System.out.println(tree.toStringTree());
 		Result result = check(tree);
@@ -54,6 +57,7 @@ public class CheckerTest {
 	
 	@Test
 	public void test3() throws ParseException, IOException {
+		System.out.println("----Test 3----");
 		ParseTree tree = parse("test3");
 		System.out.println(tree.toStringTree());
 		Result result = check(tree);
