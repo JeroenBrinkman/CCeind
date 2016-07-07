@@ -334,7 +334,10 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitPlusExpr(PlusExprContext ctx) {
+		emit(OpCode.nop);
+		System.out.println(ctx.expr(0).getText());
 		visitH(ctx.expr(0));
+		emit(OpCode.nop);
 		visitH(ctx.expr(1));
 	
 		
