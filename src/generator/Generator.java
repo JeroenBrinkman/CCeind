@@ -319,7 +319,17 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitReadExpr(ReadExprContext ctx) {
-		// TODO Auto-generated method stub
+		Type type = checkResult.getType(ctx);
+		for (int i = 0; i < ctx.ID().size(); i++) {
+			if (type.equals(Type.CHAR)) {
+				// TODO
+			} else if (type.equals(Type.STRING)) {
+				// TODO
+			} else {
+				emit(OpCode.in, new Str(ctx.ID(0).getText() + ": "), reg(ctx));
+				emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
+			}
+		}
 		return null;
 	}
 
