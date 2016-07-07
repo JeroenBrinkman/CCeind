@@ -53,7 +53,8 @@ public class RegisterManager {
 	 */
 	public String getReg(ParseTree ctx) {
 		for (Register r : registers) {
-			if (r.ctx.equals(ctx)) {
+			
+			if (r.ctx != null && r.ctx.equals(ctx)) {
 				return r.toString();
 			}
 		}

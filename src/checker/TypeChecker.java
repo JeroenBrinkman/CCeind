@@ -301,7 +301,9 @@ public class TypeChecker extends TempNameBaseListener {
 			if (!sT.add(ctx.ID().getText(), getType(ctx.type()))) {
 				addError(ctx, "Illegal declaration, '$s' already in scope.", ctx.ID().getText());
 			}else{
-				
+				setType(ctx.ID(), getType(ctx.type()));
+				setType(ctx, getType(ctx.type()));
+				return;
 			}
 		} else {
 			if(!sT.add(ctx.ID().getText(), getType(ctx.type()))){
@@ -356,7 +358,7 @@ public class TypeChecker extends TempNameBaseListener {
 			setType(ctx, Type.VOID);
 		} else {
 			setType(ctx, type);
-			// setOffset(ctx, this.scope.offset(id));
+			//setOffset(ctx, this.scope.offset(id));
 			setEntry(ctx, ctx);
 		}
 	}

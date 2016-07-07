@@ -1,6 +1,9 @@
 package compiler;
 
 
+import iloc.Simulator;
+import iloc.model.Program;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,6 +19,7 @@ import checker.ErrorListener;
 import checker.ParseException;
 import checker.Result;
 import checker.TypeChecker;
+import generator.Generator;
 import grammar.TempNameLexer;
 import grammar.TempNameParser;
 
@@ -24,7 +28,6 @@ public class TempNameCompiler {
 	private final static TempNameCompiler instance = new TempNameCompiler();
 	/** Debug flag. */
 	private final static boolean SHOW = true;
-
 	/** Returns the singleton instance of this class. */
 	public static TempNameCompiler instance() {
 		return instance;
@@ -36,29 +39,30 @@ public class TempNameCompiler {
 			System.err.println("Usage: filename");
 			return;
 		}
-		//try {
+		try {
 			System.out.println("--- Running " + args[0]);
-			//Program prog = instance().compile(new File(args[0]));
+			Program prog = instance().compile(new File(args[0]));
 			if (SHOW) {
-				//System.out.println(prog.prettyPrint());
+				System.out.println(prog.prettyPrint());
 			}
-			//Simulator sim = new Simulator(prog);
-			//sim.run();
+			Simulator sim = new Simulator(prog);
+			sim.run();
 			System.out.println("--- Done with " + args[0]);
-		/**} catch (ParseException exc) {
+		} catch (ParseException exc) {
 			exc.print();
 		} catch (IOException exc) {
 			exc.printStackTrace();
-		}*/
+		}
 	}
 
 	/** The fixed checker of this compiler. */
 	private final TypeChecker checker;
 	/** The fixed generator of this compiler. */
-	//private final Generator generator;
+	private final Generator generator;
 
 	private TempNameCompiler() {
 		this.checker = new TypeChecker();
+		this.generator = new Generator();
 		//this.generator = new Generator();
 	}
 
@@ -77,22 +81,22 @@ public class TempNameCompiler {
 		return this.checker.check(tree);
 	}
 
-	/** Compiles a given Simple Pascal string into an ILOC program. 
+	/**Compiles a given Simple Pascal string into an ILOC program. */
 	public Program compile(String text) throws ParseException {
 		return compile(parse(text));
-	}*/
+	}
 
-	/** Compiles a given Simple Pascal file into an ILOC program. 
+	 /**Compiles a given Simple Pascal file into an ILOC program. */
 	public Program compile(File file) throws ParseException, IOException {
 		return compile(parse(file));
-	}*/
+	}
 
-	/** Compiles a given Simple Pascal parse tree into an ILOC program. 
+	/** Compiles a given Simple Pascal parse tree into an ILOC program. */
 	public Program compile(ParseTree tree) throws ParseException {
 		Result checkResult = this.checker.check(tree);
 		
 		return this.generator.generate(tree, checkResult);
-	}*/
+	}
 
 	/** Compiles a given Simple Pascal string into a parse tree. */
 	public ParseTree parse(String text) throws ParseException {

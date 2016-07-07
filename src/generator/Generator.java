@@ -5,20 +5,15 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
-import iloc.model.Str;
 import iloc.eval.Machine;
-import iloc.model.Op;
-import iloc.model.OpCode;
-import iloc.model.Operand;
+import iloc.model.*;
+import iloc.Simulator;
 import checker.Result;
 import checker.Type;
 import grammar.TempNameBaseVisitor;
 import grammar.TempNameParser.*;
-import iloc.Simulator;
-import iloc.model.Label;
-import iloc.model.Num;
-import iloc.model.Program;
-import iloc.model.Reg;
+
+
 
 public class Generator extends TempNameBaseVisitor<Op> {
 	/** The representation of the boolean value <code>false</code>. */
@@ -127,7 +122,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		Reg reg;
 		// IF the value is ONLY stored in memory, it should be loaded into the
 		// register before use
-		if (mM.hasMemory(node) && !mM.hasReg(node)) {
+		/**if (mM.hasMemory(node) && !mM.hasReg(node)) {
 			reg = new Reg(mM.getVarReg(node));
 			Type elseType = checkResult.getType(node);
 			if (elseType.equals(Type.CHAR)) {
@@ -136,9 +131,9 @@ public class Generator extends TempNameBaseVisitor<Op> {
 				emit(OpCode.loadAI, arp, offset(node), reg);
 			}
 			// TODO extend for booleans, Strings
-		} else {
+		} else {*/
 			reg = new Reg(mM.getVarReg(node));
-		}
+		//}
 
 		return reg;
 	}
@@ -230,6 +225,7 @@ public class Generator extends TempNameBaseVisitor<Op> {
 		}
 		visit(ctx.expr(last));
 		Reg lastReg = reg(ctx.expr(last));
+		System.out.println(ctx.expr(last).getText());
 		mM.closeScope();
 		emit(OpCode.storeAI, lastReg, arp, offset(ctx));
 		return null;
