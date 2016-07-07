@@ -14,6 +14,7 @@ import org.junit.Test;
 
 
 
+
 import checker.ParseException;
 import iloc.Simulator;
 import iloc.model.Program;
@@ -31,6 +32,7 @@ public class GeneratorTest {
 		System.out.println(prog.prettyPrint());
 		String out = sim(prog, "");
 		System.out.println(out);
+		
 	}
 	
 	@Test
@@ -39,14 +41,7 @@ public class GeneratorTest {
 		System.out.println(prog.prettyPrint());
 		String out = sim(prog, "");
 		System.out.println(out);
-	}
-	
-	@Test
-	public void test2() throws IOException, ParseException {
-		Program prog = compile("test2");
-		System.out.println(prog.prettyPrint());
-		String out = sim(prog, "");
-		System.out.println(out);
+		assertEquals("c: 20", out.trim());
 	}
 
 	private Program compile(String filename) throws IOException, ParseException {

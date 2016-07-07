@@ -236,8 +236,6 @@ public class Generator extends TempNameBaseVisitor<Op> {
 			visit(ctx.expr(i));
 		}
 		visit(ctx.expr(last));
-		Reg lastReg = reg(ctx.expr(last));
-		System.out.println(ctx.expr(last).getText());
 		emit(OpCode.loadAI, arp, offset(ctx.expr(last)), reg(ctx));
 		mM.closeScope();
 		emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));

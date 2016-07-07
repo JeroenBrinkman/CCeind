@@ -58,7 +58,6 @@ public class TypeChecker extends TempNameBaseListener {
 			throw new IllegalArgumentException("Missing inferred type of " + node.getText());
 		}
 		if (!actual.equals(expected)) {
-			System.out.println(node.getText());
 			addError(node, "Expected type '%s' but found '%s'", expected, actual);
 		}
 	}
