@@ -70,6 +70,11 @@ public class Program {
 		return Collections.unmodifiableList(this.instrList);
 	}
 
+	/** Returns the flattened list of operations in this program. */
+	public List<Op> getOps() {
+		return Collections.unmodifiableList(this.opList);
+	}
+	
 	/** Returns the operation at a given line number. */
 	public Op getOpAt(int line) {
 		return this.opList.get(line);
