@@ -44,7 +44,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 	}
 
 	private void moveString(ParseTree from, ParseTree to, boolean closeScope) {
-		//TODO add id's
+		// TODO add id's
 		// SETUP
 		int[] stringData = mM.getSizeAndOffset(from, null);
 		if (closeScope) {
@@ -92,7 +92,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 	}
 
 	private void typedLoad(ParseTree ctx, String id) {
-		//TODO add id's
+		// TODO add id's
 		Type type = checkResult.getType(ctx);
 		if (type.equals(Type.CHAR)) {
 			emit(OpCode.cloadAI, arp, offset(ctx, id), reg(ctx));
@@ -519,9 +519,8 @@ public class Generator extends TempNameBaseVisitor<String> {
 	@Override
 	public String visitCharExpr(CharExprContext ctx) {
 		int chara = (int) ctx.CHR().getText().charAt(1);
-		Reg reg1 = new Reg(mM.getConstReg());
-		emit(OpCode.loadI, new Num(chara), reg1);
-		emit(OpCode.i2c, reg1, reg(ctx));
+		emit(OpCode.loadI, new Num(chara), reg(ctx));
+		emit(OpCode.i2c, reg(ctx), reg(ctx));
 		return null;
 	}
 
@@ -533,6 +532,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 		for (int i = 0; i < str.length(); i++) {
 			int chara = (int) str.charAt(i);
 			emit(OpCode.loadI, new Num(chara), reg(ctx));
+			emit(OpCode.i2c, reg(ctx), reg(ctx));
 			emit(OpCode.cstoreAI, reg(ctx), arp, new Num(offset + i * Machine.DEFAULT_CHAR_SIZE));
 		}
 		return null;
