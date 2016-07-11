@@ -16,4 +16,5 @@ start{
 
 	#Print#
 	print(c);
+	print(i);
 }

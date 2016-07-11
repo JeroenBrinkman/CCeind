@@ -6,13 +6,11 @@ start{
 	print(a);
 	print(b);
 	print(c);
-	#print(d);#
+	print(d);
 	a := 1337;
 	b := false;
-	c := 'x';
-	d := "derp";
+	c := 'x';	
 	print(a);
 	print(b);
 	print(c);
-	#print(d);#
 }

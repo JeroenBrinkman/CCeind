@@ -360,7 +360,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 				returnResult(ctx.expr(0), ctx, id);
 			} else if (type.equals(Type.STRING)) {
 				int[] stringData = mM.getSizeAndOffset(ctx.expr(0), id);
-
+				System.out.println(stringData[0] + " : "+ stringData[1]);
 				// Push chars
 				for (int j = stringData[0]; j > 0; j--) {
 					emit(OpCode.cloadAI, arp, new Num(stringData[1] + j * Machine.DEFAULT_CHAR_SIZE), reg(ctx));
