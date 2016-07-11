@@ -3,6 +3,12 @@ start {
 	boolean ab := true;
 	char ac    := 'd';
 	string ad  := "gg";
+
+	#Dubble declerations#
+	integer aa := 5;
+	boolean ab := false;
+	char ac := 'e';
+	string ad := "wp"; 
 	
 	#If#
 	integer a := if 4 then 2 else 3;

@@ -19,11 +19,11 @@ start {
 	while a < b do a + b;
 	while false do a - b;
 
-	#Read -> ERRORS
+	#Read -> ERRORS#
 	integer i  := read(a);
 	boolean ia := read(aa);
 	char ib    := read(ab);
-	string ic  := read(ac);#
+	string ic  := read(ac);
 	
 	#Print#
 	integer j := print(69);

@@ -1,0 +1,26 @@
+start{
+	boolean a := true;
+	boolean b := false;
+
+	boolean c := a and a;
+	boolean d := a or b;
+	print(c);
+	print(d);
+
+	integer a0 := 4;
+	integer a1 := 5;
+
+	boolean res0 := a0 < a1; 
+	boolean res1 := a0 > a1; 
+	boolean res2 := a0 <= a1;
+	boolean res3 := a0 >= a1;
+	boolean res4 := a0 <> a1;
+	boolean res5 := a0 == a1; 
+
+	print(res0);
+	print(res1);
+	print(res2);
+	print(res3);
+	print(res4);
+	print(res5);
+}

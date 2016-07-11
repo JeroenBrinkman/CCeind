@@ -1,0 +1,10 @@
+start {
+	integer a := 1;
+	integer b := 2;
+	integer c := read(a);
+	integer d := read(b);
+	print(a);
+	print(b);
+	print(c);
+	print(d);
+}
