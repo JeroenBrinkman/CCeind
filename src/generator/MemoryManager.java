@@ -168,7 +168,7 @@ public class MemoryManager {
 						return b.start;
 					} else {
 						freeMemory(id);
-						reserveMemory(id, size, ctx);
+						break;
 					}
 				}
 			}
