@@ -1,0 +1,9 @@
+start{
+	boolean a := true;
+	boolean b := false;
+
+	boolean c := a and a;
+	boolean d := a or b;
+	print(c);
+	print(d);
+}

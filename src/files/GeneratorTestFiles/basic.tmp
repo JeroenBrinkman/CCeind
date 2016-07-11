@@ -1,0 +1,19 @@
+start{
+	#Declerations#
+	integer a := 5;
+	integer b := 4;
+	char c;
+
+	#If and assignment#
+	if a < b then c := 'a' 
+	else c := 'b';
+	integer i := 0;
+
+	#While#
+	while i < 5 do {
+		i := i+1;
+	};
+
+	#Print#
+	print(c);
+}

@@ -1,0 +1,18 @@
+start{
+	integer a := 69;
+	boolean b := true;
+	char c    := 'd';
+	string d  := "herp";
+	print(a);
+	print(b);
+	print(c);
+	#print(d);#
+	a := 1337;
+	b := false;
+	c := 'x';
+	d := "derp";
+	print(a);
+	print(b);
+	print(c);
+	#print(d);#
+}

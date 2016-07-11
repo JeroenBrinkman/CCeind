@@ -33,7 +33,7 @@ public class CheckerTest {
 			result = check(tree);
 			System.out.println(tree.toStringTree());
 		} catch (IOException e) {
-			fail("File error.");
+			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
 			for(String msg : e.getMessages()){
@@ -55,7 +55,7 @@ public class CheckerTest {
 			result = check(tree);
 			System.out.println(tree.toStringTree());
 		} catch (IOException e) {
-			fail("File error.");
+			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
 			for(String msg : e.getMessages()){
@@ -75,7 +75,7 @@ public class CheckerTest {
 			result = check(tree);
 			System.out.println(tree.toStringTree());
 		} catch (IOException e) {
-			fail("File error.");
+			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
 			for(String msg : e.getMessages()){
@@ -100,7 +100,7 @@ public class CheckerTest {
 			System.out.println(tree.toStringTree());
 			fail("No errors occured.");
 		} catch (IOException e) {
-			fail("File error.");
+			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
 			for(String msg : e.getMessages()){
@@ -120,7 +120,7 @@ public class CheckerTest {
 			System.out.println(tree.toStringTree());
 			fail("No errors occured.");
 		} catch (IOException e) {
-			fail("File error.");
+			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
 			for(String msg : e.getMessages()){

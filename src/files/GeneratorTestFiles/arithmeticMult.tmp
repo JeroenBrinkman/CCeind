@@ -1,0 +1,12 @@
+start{
+	integer a := 5;
+	integer b := 4;
+	integer c := 20;
+
+	integer d := a * b;
+	integer e := a % b;
+	integer f := c / a;
+	print(d);
+	print(e);
+	print(f);
+}

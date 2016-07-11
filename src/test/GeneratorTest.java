@@ -20,43 +20,100 @@ public class GeneratorTest {
 	private final TempNameCompiler compiler = TempNameCompiler.instance();
 
 	@Test
-	public void test0() throws IOException, ParseException {
-		Program prog = compile("test0");
-		System.out.println(prog.prettyPrint());
-		String out = sim(prog, "");
-		System.out.println(out);
+	public void readPrint(){
+		Program prog;
+		try {
+			prog = compile("readPrint");
+			System.out.println(prog.prettyPrint());
+			String out = sim(prog, "4\n5");
+			System.out.println(out);
+		} catch (IOException e) {
+			fail("Read/Write fault");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			fail("An error occured, see command line for more information.");
+		}
+		
 
+	}
+	
+	@Test
+	public void arrithmeticPlus() throws IOException, ParseException {
+		Program prog;
+		try{
+			prog = compile("arithmeticPlus");
+			System.out.println(prog.prettyPrint());
+			String out = sim(prog, "");
+			System.out.println(out);
+		} catch (IOException e) {
+			fail("Read/Write fault");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			fail("An error occured, see command line for more information.");
+		}
 	}
 
 	@Test
-	public void test1() throws IOException, ParseException {
-		Program prog = compile("test1");
-		System.out.println(prog.prettyPrint());
-		String out = sim(prog, "");
-		System.out.println(out);
-		assertEquals("c: 20", out.trim());
+	public void arrithmeticMult() throws IOException, ParseException {
+		Program prog;
+		try{
+			prog = compile("arithmeticMult");
+			System.out.println(prog.prettyPrint());
+			String out = sim(prog, "");
+			System.out.println(out);
+		} catch (IOException e) {
+			fail("Read/Write fault");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			fail("An error occured, see command line for more information.");
+		}
 	}
 
 	@Test
-	public void test2() throws IOException, ParseException {
-		Program prog = compile("test2");
-		System.out.println(prog.prettyPrint());
-		String out = sim(prog, "");
-		System.out.println(out);
-		assertEquals("c: b", out.trim());
+	public void assDecl() throws IOException, ParseException {
+		Program prog;
+		try{
+			prog = compile("assDecl");
+			System.out.println(prog.prettyPrint());
+			String out = sim(prog, "");
+			System.out.println(out);
+		} catch (IOException e) {
+			fail("Read/Write fault");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			fail("An error occured, see command line for more information.");
+		}
 	}
 
 	@Test
 	public void genTest0() throws IOException, ParseException {
-		Program prog = compile("genTest0");
-		System.out.println(prog.prettyPrint());
-		String out = sim(prog, "");
-		System.out.println(out);
-		String[] values = out.trim().split("\n");
-		// assertEquals("a*b: 20", values[0]);
-		// assertEquals("c: 20", values[1]);
-		// assertEquals("d: 1", values[2]);
-		assertEquals("e: 2", values[3]);
+		Program prog;
+		try{
+			prog = compile("compBool");
+			System.out.println(prog.prettyPrint());
+			String out = sim(prog, "");
+			System.out.println(out);
+		} catch (IOException e) {
+			fail("Read/Write fault");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			fail("An error occured, see command line for more information.");
+		}
 	}
 
 	private Program compile(String filename) throws IOException, ParseException {
