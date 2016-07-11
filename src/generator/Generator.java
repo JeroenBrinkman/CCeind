@@ -399,9 +399,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 		}
 
 		if (ctx.ID().size() == 1) {
-			System.out.println(ctx.getText());
-			System.out.println(ctx.ID(1));
-			return ctx.ID(1).getText();
+			return ctx.ID(0).getText();
 		}
 		return null;
 	}
