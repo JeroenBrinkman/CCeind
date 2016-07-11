@@ -14,54 +14,141 @@ import checker.Type;
 import compiler.TempNameCompiler;
 
 public class CheckerTest {
-	private final static String BASE_DIR = "src/files";
+	private final static String BASE_DIR = "src/files/TypeCheckerTestFiles";
 	private final static String EXT = ".tmp";
 	private final TempNameCompiler compiler = TempNameCompiler.instance();
 
+	
+	/**
+	 *	Tests that should get through the checker without errors.
+	 */
+	
 	@Test
-	public void test0() throws ParseException, IOException {
-		System.out.println("----Test 0----");
-		ParseTree tree = parse("test0");
-		Result result = check(tree);
-		ParseTree assX = tree.getChild(1).getChild(3);
-		System.out.println(assX.getText());
-		ParseTree assXX = assX.getChild(2);
-		System.out.println(assXX.getText());
-		assertEquals(Type.INT, result.getType(assX));
-		assertEquals(Type.INT, result.getType(assXX.getChild(0)));
-		assertEquals(Type.INT, result.getType(assXX.getChild(2)));
+	public void testBasic(){
+		System.out.println("----Testing Basics----");
+		ParseTree tree;
+		Result result;
+		try {
+			tree = parse("basic");
+			result = check(tree);
+			System.out.println(tree.toStringTree());
+		} catch (IOException e) {
+			fail("File error.");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			fail("An error occured, see command line for more information.");
+		}
+		
+		
 	}
 	
 	@Test
-	public void test1() throws ParseException, IOException {
-		System.out.println("----Test 1----");
-		ParseTree tree = parse("test1");
-		System.out.println(tree.toStringTree());
-		Result result = check(tree);
-		ParseTree a = tree.getChild(1).getChild(1);
-		System.out.println(a.getText());
-		assertEquals(Type.INT, result.getType(a));
-		assertEquals(Type.INT, result.getType(a.getChild(3)));
-		ParseTree print = tree.getChild(1).getChild(7);
-		assertEquals(Type.INT, result.getType(print.getChild(2))); 
-		assertEquals(Type.INT, result.getType(print));
-	}
-
-	@Test
-	public void test2() throws ParseException, IOException {
-		System.out.println("----Test 2----");
-		ParseTree tree = parse("test2");
-		System.out.println(tree.toStringTree());
-		Result result = check(tree);
+	public void testOp(){
+		System.out.println("----Testing Operations----");
+		ParseTree tree;
+		Result result;
+		try {
+			tree = parse("ops");
+			result = check(tree);
+			System.out.println(tree.toStringTree());
+		} catch (IOException e) {
+			fail("File error.");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			fail("An error occured, see command line for more information.");
+		}
 	}
 	
 	@Test
-	public void test3() throws ParseException, IOException {
-		System.out.println("----Test 3----");
-		ParseTree tree = parse("test3");
-		System.out.println(tree.toStringTree());
-		Result result = check(tree);
+	public void testExpr(){
+		System.out.println("----Testing Expressions----");
+		ParseTree tree;
+		Result result;
+		try {
+			tree = parse("exprs");
+			result = check(tree);
+			System.out.println(tree.toStringTree());
+		} catch (IOException e) {
+			fail("File error.");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			fail("An error occured, see command line for more information.");
+		}
 	}
+	
+	/**
+	 *	Tests that should not get through the checker and thus produce errors.
+	 *	The errors that are printed are explained in 
+	 */
+	@Test
+	public void testErr0(){
+		System.out.println("----Testing Error 0----");
+		ParseTree tree;
+		Result result;
+		try {
+			tree = parse("err0");
+			result = check(tree);
+			System.out.println(tree.toStringTree());
+			fail("No errors occured.");
+		} catch (IOException e) {
+			fail("File error.");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			
+		}
+	}
+	@Test
+	public void testErr1(){
+		System.out.println("----Testing Error 1----");
+		ParseTree tree;
+		Result result;
+		try {
+			tree = parse("err1");
+			result = check(tree);
+			System.out.println(tree.toStringTree());
+			fail("No errors occured.");
+		} catch (IOException e) {
+			fail("File error.");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+		}
+	}
+	@Test
+	public void testErr2(){
+		System.out.println("----Testing Error 2----");
+		ParseTree tree;
+		Result result;
+		try {
+			tree = parse("err2");
+			result = check(tree);
+			System.out.println(tree.toStringTree());
+			fail("No errors occured.");
+		} catch (IOException e) {
+			fail("File error.");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for(String msg : e.getMessages()){
+				System.err.println(msg);
+			}
+			
+		}
+	}
+	
 	
 	private ParseTree parse(String filename) throws IOException, ParseException {
 		return this.compiler.parse(new File(BASE_DIR, filename + EXT));

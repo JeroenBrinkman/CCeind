@@ -1,0 +1,10 @@
+start {
+	integer a := 4 + 'a';
+	integer b := 6 * "nope";
+	integer c := -"nope";
+	boolean d := not 4;
+	boolean e := 6 and 9;
+	boolean f := 1 or 0;
+	integer g := 'a' < 'b';
+	integer h := 4 == 'b'; 
+}

@@ -1,0 +1,42 @@
+start {
+	#Mult#
+	integer a := 8 * 4;
+	integer b := 8 / 4;
+	integer c := 8 % 4;
+	integer d := a * b;
+	integer e := a / b;
+	integer f := a % b;
+
+	#Add#
+	#TODO char/string addition?#
+	integer g := 8 + 4;
+	integer h := 8 - 4;
+	integer i := g + h;
+	integer j := g - h;
+
+	#Prf#
+	integer k := -4;
+	integer l := -b;
+	boolean m := not true;
+	boolean n := not m;
+
+	#Bool#
+	boolean o := true and false;
+	boolean p := true or  false;
+	boolean q := o and p;
+	boolean r := o or p;
+
+	#Comp#
+	boolean s := 6 <= 9;
+	boolean t := 6 < 9;
+	boolean u := 6 >= 9;
+	boolean v := 6 > 9;
+	boolean w := 6 == 9;
+	boolean x := 6 <> 9;
+	boolean y := true == false;
+	boolean z := true <> false;
+	boolean aa := 'g' == 'g';
+	boolean ab := 'g' <> 'g';
+	boolean ac := "gg" == "wp";
+	boolean ad := "gg" <> "wp";
+}

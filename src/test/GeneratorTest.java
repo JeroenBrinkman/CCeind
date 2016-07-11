@@ -24,7 +24,7 @@ import compiler.TempNameCompiler;
 
 
 public class GeneratorTest {
-	private final static String BASE_DIR = "src/files";
+	private final static String BASE_DIR = "src/files/GeneratorTestFiles";
 	private final static String EXT = ".tmp";
 	private final TempNameCompiler compiler = TempNameCompiler.instance();
 	

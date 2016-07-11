@@ -1,0 +1,17 @@
+start {
+	#Declerations and assignment seperated#
+	integer a := 0 #:= 0 --Dit zorgt dat het werkt--#;
+	boolean b;
+	char c;
+	string d;
+	a := 1337;
+	b := true;
+	c := 'g';
+	d := "herp derp";
+
+	#One-line declerations#
+	integer w := 69;
+	boolean x := false;
+	char y := 'g';
+	string z := "Hello World!";
+}

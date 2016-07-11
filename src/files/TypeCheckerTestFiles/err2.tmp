@@ -1,0 +1,47 @@
+start {
+	integer aa := 4;
+	boolean ab := true;
+	char ac    := 'd';
+	string ad  := "gg";
+	
+	#If#
+	integer a := if 4 then 2 else 3;
+	integer b := if 2 > 4 then true else false;
+	integer c := if 2 < 4 then 3 else 'a';
+
+	#While#
+	while 4 do 1;
+	while 1 do 'd'; 
+
+	#Read -> ERRORS#
+	boolean help := ab;
+	integer d := read(help);
+	boolean e := read(ac);
+	char f    := read(ad);
+	string g  := read(aa);
+	integer h := read(aa,ab);
+	integer i := read(aa,aa);
+
+	#Print#
+	integer j := print(ab);
+	boolean k := print(ac);
+	char l    := print(ad);
+	string m  := print(aa);
+	integer n := print(aa, ab);
+	integer o := print(aa, aa);
+
+	#Par#
+	integer p := (ab);
+	boolean q := (ac);
+	char r    := (ad);
+	string s  := (aa);
+	integer t := (aa + ab);
+	integer u := (aa * (aa + ab));
+
+	#Brace#
+	integer v := {ab;};
+	boolean w := {ac;};
+	char x    := {ad;};
+	string y  := {aa;};
+	integer z := {'a'; 69; "Hello World!"; ab;};
+}
