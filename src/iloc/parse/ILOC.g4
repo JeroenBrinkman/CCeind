@@ -1,6 +1,5 @@
 grammar ILOC;
 
-
 fragment LETTER: [a-zA-Z];
 fragment DIGIT: [0-9];
 

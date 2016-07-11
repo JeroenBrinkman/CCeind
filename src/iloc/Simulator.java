@@ -365,12 +365,15 @@ public class Simulator {
 	/** Pops a string from the stack.
 	 * The string should be represented by an integer length followed
 	 * by the chars of the string, with first char on top.
+	 * This method coerces all values to (Java) chars,
+	 * so if {@link Machine#setCharSize(int)} has been set to 4 then
+	 * all more significant bytes are lost
 	 */
 	private String popString() {
 		StringBuilder result = new StringBuilder();
 		int len = pop();
 		for (int i = 0; i < len; i++) {
-			result.append(this.vm.getCharSize() <= 2 ? (char) popC() : popC());
+			result.append((char) popC());
 		}
 		return result.toString();
 	}

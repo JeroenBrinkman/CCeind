@@ -15,7 +15,7 @@ public class Machine {
 	public static final int INT_SIZE = 4;
 	/** Default size of a char value (in bytes).
 	 * The actual size used in a particular Machine instance
-	 * can be set using 
+	 * can be set using {@link #setCharSize(int)}
 	 */
 	public static final int DEFAULT_CHAR_SIZE = 1;
 	/** Size of an integer values (in bits). */

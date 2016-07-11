@@ -179,15 +179,25 @@ public class MemoryManager {
 	/**
 	 * Returns the offset and size of an object in memory
 	 * 
-	 * @requires hasMemory(ctx)
+	 * @requires has Memory(ctx) || has Memory(id)
 	 */
-	public int[] getSizeAndOffset(ParseTree ctx) {
+	public int[] getSizeAndOffset(ParseTree ctx, String id) {
 		int[] out = new int[2];
-		for (Block b : memory) {
-			if (b.ctx != null && b.ctx.equals(ctx)) {
-				out[0] = b.size;
-				out[1] = b.start;
-				return out;
+		if (id == null) {
+			for (Block b : memory) {
+				if (b.ctx != null && b.ctx.equals(ctx)) {
+					out[0] = b.size;
+					out[1] = b.start;
+					return out;
+				}
+			}
+		} else {
+			for (Block b : memory) {
+				if (b.id != null && b.id.equals(id)) {
+					out[0] = b.size;
+					out[1] = b.start;
+					return out;
+				}
 			}
 		}
 		return null;
@@ -290,7 +300,7 @@ public class MemoryManager {
 		for (Block b : memory) {
 			out = out + b.toString();
 		}
-		out = out +"\n"+  regman.toString();
+		out = out + "\n" + regman.toString();
 		return out;
 	}
 }
