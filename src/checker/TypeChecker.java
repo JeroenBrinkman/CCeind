@@ -260,11 +260,13 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitReadExpr(ReadExprContext ctx) {
+		Type[] tps = new Type[ctx.ID().size()];
 		for (int i = 0; i < ctx.ID().size(); i++) {
 			String targetString = ctx.ID(i).toString();
 			if (!sT.contains(targetString)) {
-				errors.add(" Attempting to read undeclared variable '" + ctx.ID().toString() + "' !");
+				errors.add(" Attempting to read for a undeclared variable '" + ctx.ID().toString() + "' !");
 			}
+			tps[i] = sT.getType(ctx.ID(i).getText());
 		}
 		if (ctx.ID().size() > 1) {
 			setType(ctx, Type.VOID);
@@ -333,7 +335,6 @@ public class TypeChecker extends TempNameBaseListener {
 		setEntry(ctx, entry(ctx.expr()));
 	}
 
-	// TODO assert?*/
 	@Override
 	public void exitPrfExpr(PrfExprContext ctx) {
 		Type type;

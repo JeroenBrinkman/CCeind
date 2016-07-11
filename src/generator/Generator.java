@@ -382,19 +382,23 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitReadExpr(ReadExprContext ctx) {
-		Type type = checkResult.getType(ctx);
+		Type[] types = checkResult.getReadTypes(ctx);
 		for (int i = 0; i < ctx.ID().size(); i++) {
-			if (type.equals(Type.CHAR)) {
+			if (types[i].equals(Type.CHAR)) {
 				emit(OpCode.cin, new Str(ctx.ID(i).getText() + "? : "));
 				emit(OpCode.pop, reg(ctx));
 				emit(OpCode.cpop, reg(ctx));
-				emit(OpCode.cstoreAI, reg(ctx), arp, offset(ctx));
-			} else if (type.equals(Type.STRING)) {
-				// TODO
+				emit(OpCode.cstoreAI, reg(ctx), arp, offset(ctx, ctx.ID(i).getText()));
+			} else if (types[i].equals(Type.STRING)) {
+				// TODO iets met labels enzo
 			} else {
 				emit(OpCode.in, new Str(ctx.ID(i).getText() + "? : "), reg(ctx));
-				emit(OpCode.storeAI, reg(ctx), arp, offset(ctx));
+				emit(OpCode.storeAI, reg(ctx), arp, offset(ctx, ctx.ID(i).getText()));
 			}
+		}
+		
+		if(ctx.ID().size() == 1 ){
+			return ctx.ID(1).getText();
 		}
 		return null;
 	}
