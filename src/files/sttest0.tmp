@@ -1,4 +1,4 @@
 start{
 	string s := "hoi";
-	#print(s);#
+	print(s);
 }

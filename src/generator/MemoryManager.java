@@ -46,7 +46,7 @@ public class MemoryManager {
 			out = out + "\tstart = \t" + start + "\n";
 			out = out + "\tsize = \t" + size + "\n";
 			out = out + "\tid = \t" + id + "\n";
-			out = out + "\tstart = \t" + ctx.getText() + "\n";
+			out = out + "\tctx = \t" + ctx.getText() + "\n";
 			out = out + "\t--------------";
 			return out;
 		}
@@ -301,6 +301,20 @@ public class MemoryManager {
 			out = out + b.toString();
 		}
 		out = out + "\n" + regman.toString();
+		return out;
+	}
+
+	public String toString(boolean mem, boolean reg) {
+		String out = "";
+		if (mem) {
+			out = "Memory model:\n";
+			for (Block b : memory) {
+				out = out + b.toString();
+			}
+		}
+		if (reg) {
+			out = out + "\n" + regman.toString();
+		}
 		return out;
 	}
 }
