@@ -390,14 +390,15 @@ public class Generator extends TempNameBaseVisitor<String> {
 				emit(OpCode.cpop, reg(ctx));
 				emit(OpCode.cstoreAI, reg(ctx), arp, offset(ctx, ctx.ID(i).getText()));
 			} else if (types[i].equals(Type.STRING)) {
-				// TODO iets met labels enzo
+				// TODO not supported by our memory/registry manager, too much
+				// work to edit it in properly
 			} else {
 				emit(OpCode.in, new Str(ctx.ID(i).getText() + "? : "), reg(ctx));
 				emit(OpCode.storeAI, reg(ctx), arp, offset(ctx, ctx.ID(i).getText()));
 			}
 		}
-		
-		if(ctx.ID().size() == 1 ){
+
+		if (ctx.ID().size() == 1) {
 			return ctx.ID(1).getText();
 		}
 		return null;

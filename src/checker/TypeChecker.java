@@ -268,12 +268,14 @@ public class TypeChecker extends TempNameBaseListener {
 			}
 			tps[i] = sT.getType(ctx.ID(i).getText());
 		}
+
+		result.setReadTypes(ctx, tps);
 		if (ctx.ID().size() > 1) {
 			setType(ctx, Type.VOID);
-			setEntry(ctx,ctx);
+			setEntry(ctx, ctx);
 		} else {
 			setType(ctx, sT.getType(ctx.ID(0).getText()));
-			setEntry(ctx,ctx);
+			setEntry(ctx, ctx);
 		}
 
 	}
@@ -294,9 +296,20 @@ public class TypeChecker extends TempNameBaseListener {
 
 	@Override
 	public void exitPlusExpr(PlusExprContext ctx) {
-		checkType(ctx.expr(0), Type.INT);
-		checkType(ctx.expr(1), Type.INT);
-		setType(ctx, Type.INT);
+		if (getType(ctx.expr(0)).equals(Type.STRING)) {
+			if (getType(ctx.expr(0)).equals(Type.STRING) || getType(ctx.expr(0)).equals(Type.CHAR)) {
+				setType(ctx, Type.STRING);
+			}else{
+				addError(ctx, "Illegal type second argument, STRING or CHAR expected.");
+				setType(ctx, Type.VOID);
+			}
+		} else if (getType(ctx.expr(0)).equals(Type.INT)) {
+			checkType(ctx.expr(1), Type.INT);
+			setType(ctx, Type.INT);
+		} else {
+			addError(ctx, "Illegal type first argument, STRING or INT expected.");
+			setType(ctx, Type.VOID);
+		}
 		setEntry(ctx, entry(ctx.expr(0)));
 	}
 
@@ -307,16 +320,16 @@ public class TypeChecker extends TempNameBaseListener {
 			setEntry(ctx, entry(ctx.expr()));
 			if (!sT.add(ctx.ID().getText(), getType(ctx.type()))) {
 				addError(ctx, "Illegal declaration, '$s' already in scope.", ctx.ID().getText());
-			}else{
+			} else {
 				setType(ctx.ID(), getType(ctx.type()));
 				setType(ctx, getType(ctx.type()));
 				return;
 			}
 		} else {
-			if(!sT.add(ctx.ID().getText(), getType(ctx.type()))){
+			if (!sT.add(ctx.ID().getText(), getType(ctx.type()))) {
 				addError(ctx, "Illegal declaration, '$s' already in scope.", ctx.ID().getText());
 			}
-			//TODO entry?
+			// TODO entry?
 		}
 		setType(ctx, Type.VOID);
 	}
@@ -365,7 +378,7 @@ public class TypeChecker extends TempNameBaseListener {
 			setType(ctx, Type.VOID);
 		} else {
 			setType(ctx, type);
-			//setOffset(ctx, this.scope.offset(id));
+			// setOffset(ctx, this.scope.offset(id));
 			setEntry(ctx, ctx);
 		}
 	}
