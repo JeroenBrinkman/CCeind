@@ -319,7 +319,6 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitPrintExpr(PrintExprContext ctx) {
-		System.out.println(mM.toString(true, false));
 		Type type;
 		if (ctx.expr().size() > 1) {
 			for (int i = 0; i < ctx.expr().size(); i++) {
@@ -357,7 +356,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 				emit(OpCode.push, reg(ctx));
 
 				emit(OpCode.cout, new Str(ctx.expr(0).getText() + ": "));
-				returnResult(ctx.expr(0), ctx, id, id);
+				returnResult(ctx.expr(0), ctx, null, null);
 			} else if (type.equals(Type.STRING)) {
 				int[] stringData = mM.getSizeAndOffset(ctx.expr(0), id);
 				// Push chars
@@ -375,7 +374,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 				moveString(ctx.expr(0), ctx, false, id, null);
 			} else {
 				emit(OpCode.out, new Str(ctx.expr(0).getText() + ": "), reg(ctx.expr(0)));
-				returnResult(ctx.expr(0), ctx, id, id);
+				returnResult(ctx.expr(0), ctx, null, null);
 			}
 		}
 		return null;
@@ -400,6 +399,8 @@ public class Generator extends TempNameBaseVisitor<String> {
 		}
 
 		if (ctx.ID().size() == 1) {
+			System.out.println(ctx.getText());
+			System.out.println(ctx.ID(1));
 			return ctx.ID(1).getText();
 		}
 		return null;
