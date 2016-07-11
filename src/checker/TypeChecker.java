@@ -262,7 +262,6 @@ public class TypeChecker extends TempNameBaseListener {
 	public void exitReadExpr(ReadExprContext ctx) {
 		for (int i = 0; i < ctx.ID().size(); i++) {
 			String targetString = ctx.ID(i).toString();
-			System.out.println(ctx.getText() + " : "+ ctx.ID(i).getText() +" : "+ getType(ctx.ID(i)));
 			if (!sT.contains(targetString)) {
 				errors.add(" Attempting to read undeclared variable '" + ctx.ID().toString() + "' !");
 			}
@@ -271,8 +270,7 @@ public class TypeChecker extends TempNameBaseListener {
 			setType(ctx, Type.VOID);
 			setEntry(ctx,ctx);
 		} else {
-			
-			setType(ctx, getType(ctx.ID(0)));
+			setType(ctx, sT.getType(ctx.ID(0).getText()));
 			setEntry(ctx,ctx);
 		}
 
@@ -303,14 +301,12 @@ public class TypeChecker extends TempNameBaseListener {
 	@Override
 	public void exitDeclExpr(DeclExprContext ctx) {
 		if (ctx.expr() != null) {
-			
 			checkType(ctx.expr(), getType(ctx.type()));
 			setEntry(ctx, entry(ctx.expr()));
 			if (!sT.add(ctx.ID().getText(), getType(ctx.type()))) {
 				addError(ctx, "Illegal declaration, '$s' already in scope.", ctx.ID().getText());
 			}else{
 				setType(ctx.ID(), getType(ctx.type()));
-				System.out.println(ctx.ID().getText() + " : "+ getType(ctx.ID()));
 				setType(ctx, getType(ctx.type()));
 				return;
 			}

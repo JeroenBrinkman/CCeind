@@ -14,7 +14,7 @@ start {
 	while 1 do 'd'; 
 
 	#Read -> ERRORS#
-	boolean help := ab;
+	integer help := aa;
 	integer d := read(help);
 	boolean e := read(ac);
 	char f    := read(ad);
