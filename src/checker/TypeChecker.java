@@ -203,7 +203,16 @@ public class TypeChecker extends TempNameBaseListener {
 		ExprContext last = ctx.expr(ctx.expr().size() - 1);
 		setType(ctx, getType(last));
 		if (ctx.expr().size() > 0) {
-			setEntry(ctx, entry(ctx.expr(0)));
+			boolean set = false;
+			int i =0;
+			while(!set && i< ctx.expr().size()){
+				if(entry(ctx.expr(i))!= null){
+					setEntry(ctx, entry(ctx.expr(i)));
+					set =true;
+				}
+				i++;
+			}
+		
 		}
 		sT.closeScope();
 	}
