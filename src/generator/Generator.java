@@ -202,7 +202,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	private Num offset(ParseTree node) {
 		int size = 0;
-		if (checkResult.getType(node).equals(Type.INT)) {
+		if (checkResult.getType(node).equals(Type.INT) || checkResult.getType(node).equals(Type.BOOL)) {
 			size = Machine.INT_SIZE;
 		} else if (checkResult.getType(node).equals(Type.CHAR)) {
 			size = Machine.DEFAULT_CHAR_SIZE;
