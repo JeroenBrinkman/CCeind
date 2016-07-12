@@ -51,8 +51,8 @@ public class GeneratorTest {
 			System.out.println(prog.prettyPrint());
 			String out = sim(prog, "4\n5");
 			System.out.println(out);
-			assertTrue("'a' probably not eddited", out.contains("a : 4"));
-			assertTrue("'b' probably not eddited", out.contains("b : 5"));
+			assertTrue("'a' probably not eddited", out.contains("a: 4"));
+			assertTrue("'b' probably not eddited", out.contains("b: 5"));
 			assertTrue("Read 'a' fault", out.contains("c: 4"));
 			assertTrue("Read 'b' fault", out.contains("d: 5"));
 		} catch (IOException e) {
@@ -141,8 +141,8 @@ public class GeneratorTest {
 			System.out.println(prog.prettyPrint());
 			String out = sim(prog, "");
 			System.out.println(out);
-			assertTrue("Plus fault", out.contains("c : -1"));
-			assertTrue("Plus fault", out.contains("d : -1"));
+			assertTrue("Plus fault", out.contains("c: -1"));
+			assertTrue("Plus fault", out.contains("d: -1"));
 		} catch (IOException e) {
 			fail("Read/Write fault");
 		} catch (ParseException e) {
