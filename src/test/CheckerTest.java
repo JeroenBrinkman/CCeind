@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import checker.ParseException;
 import checker.Result;
-import checker.Type;
 import compiler.TempNameCompiler;
 
 public class CheckerTest {
@@ -18,13 +17,13 @@ public class CheckerTest {
 	private final static String EXT = ".tmp";
 	private final TempNameCompiler compiler = TempNameCompiler.instance();
 
-	
 	/**
-	 *	Tests that should get through the checker without errors.
+	 * Tests that should get through the checker without errors.
 	 */
-	
+
+	@SuppressWarnings("unused")
 	@Test
-	public void testBasic(){
+	public void testBasic() {
 		System.out.println("----Testing Basics----");
 		ParseTree tree;
 		Result result;
@@ -36,17 +35,17 @@ public class CheckerTest {
 			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
-			for(String msg : e.getMessages()){
+			for (String msg : e.getMessages()) {
 				System.err.println(msg);
 			}
 			fail("An error occured, see command line for more information.");
 		}
-		
-		
+
 	}
-	
+
+	@SuppressWarnings("unused")
 	@Test
-	public void testOp(){
+	public void testOp() {
 		System.out.println("----Testing Operations----");
 		ParseTree tree;
 		Result result;
@@ -58,15 +57,16 @@ public class CheckerTest {
 			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
-			for(String msg : e.getMessages()){
+			for (String msg : e.getMessages()) {
 				System.err.println(msg);
 			}
 			fail("An error occured, see command line for more information.");
 		}
 	}
-	
+
+	@SuppressWarnings("unused")
 	@Test
-	public void testExpr(){
+	public void testExpr() {
 		System.out.println("----Testing Expressions----");
 		ParseTree tree;
 		Result result;
@@ -78,19 +78,20 @@ public class CheckerTest {
 			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
-			for(String msg : e.getMessages()){
+			for (String msg : e.getMessages()) {
 				System.err.println(msg);
 			}
 			fail("An error occured, see command line for more information.");
 		}
 	}
-	
+
 	/**
-	 *	Tests that should not get through the checker and thus produce errors.
-	 *	The errors that are printed are explained in 
+	 * Tests that should not get through the checker and thus produce errors.
+	 * The errors that are printed are explained in
 	 */
+	@SuppressWarnings("unused")
 	@Test
-	public void testErr0(){
+	public void testErr0() {
 		System.out.println("----Testing Error 0----");
 		ParseTree tree;
 		Result result;
@@ -103,14 +104,16 @@ public class CheckerTest {
 			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
-			for(String msg : e.getMessages()){
+			for (String msg : e.getMessages()) {
 				System.err.println(msg);
 			}
-			
+
 		}
 	}
+
+	@SuppressWarnings("unused")
 	@Test
-	public void testErr1(){
+	public void testErr1() {
 		System.out.println("----Testing Error 1----");
 		ParseTree tree;
 		Result result;
@@ -123,13 +126,15 @@ public class CheckerTest {
 			fail("Read/Write fault.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
-			for(String msg : e.getMessages()){
+			for (String msg : e.getMessages()) {
 				System.err.println(msg);
 			}
 		}
 	}
+
+	@SuppressWarnings("unused")
 	@Test
-	public void testErr2(){
+	public void testErr2() {
 		System.out.println("----Testing Error 2----");
 		ParseTree tree;
 		Result result;
@@ -142,14 +147,13 @@ public class CheckerTest {
 			fail("File error.");
 		} catch (ParseException e) {
 			System.err.println("Errors: ");
-			for(String msg : e.getMessages()){
+			for (String msg : e.getMessages()) {
 				System.err.println(msg);
 			}
-			
+
 		}
 	}
-	
-	
+
 	private ParseTree parse(String filename) throws IOException, ParseException {
 		return this.compiler.parse(new File(BASE_DIR, filename + EXT));
 	}
