@@ -122,22 +122,22 @@ public class Generator extends TempNameBaseVisitor<String> {
 			}
 		} else if (mM.hasMemory(from)) {
 			if (type.equals(Type.CHAR)) {
-				emit(OpCode.cloadAI, arp, offset(from, fromid), reg(from));
+				// emit(OpCode.cloadAI, arp, offset(from, fromid), reg(from));
 				emit(OpCode.cstoreAI, reg(from), arp, offset(to, toid));
 			} else if (type.equals(Type.STRING)) {
 				moveString(from, to, false, fromid, toid);
 			} else {
-				emit(OpCode.loadAI, arp, offset(from, fromid), reg(from));
+				// emit(OpCode.loadAI, arp, offset(from, fromid), reg(from));
 				emit(OpCode.storeAI, reg(from), arp, offset(to, toid));
 			}
 		} else if (fromid != null) {
 			if (type.equals(Type.CHAR)) {
-				emit(OpCode.cloadAI, arp, offset(from, fromid), reg(to));
+				// emit(OpCode.cloadAI, arp, offset(from, fromid), reg(to));
 				emit(OpCode.cstoreAI, reg(to), arp, offset(to, toid));
 			} else if (type.equals(Type.STRING)) {
 				moveString(from, to, false, fromid, toid);
 			} else {
-				emit(OpCode.loadAI, arp, offset(from, fromid), reg(to));
+				// emit(OpCode.loadAI, arp, offset(from, fromid), reg(to));
 				emit(OpCode.storeAI, reg(to), arp, offset(to, toid));
 			}
 		} else {
@@ -527,7 +527,6 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitIdExpr(IdExprContext ctx) {
-		typedLoad(ctx, ctx.ID().getText());
 		return ctx.ID().getText();
 	}
 
