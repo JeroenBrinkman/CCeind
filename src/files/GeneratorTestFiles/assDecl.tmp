@@ -9,8 +9,10 @@ start{
 	print(d);
 	a := 1337;
 	b := false;
-	c := 'x';	
+	c := 'x';
+	d := "derp";	
 	print(a);
 	print(b);
 	print(c);
+	print(d);
 }
