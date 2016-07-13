@@ -1,0 +1,519 @@
+----Testing Mult Div Mod----
+Program: nop                           
+         loadI   5         => r_0      
+         storeAI r_0       => r_arp,0  
+         loadI   4         => r_1      
+         storeAI r_1       => r_arp,4  
+         loadI   20        => r_2      
+         storeAI r_2       => r_arp,8  
+         loadAI  r_arp,0   => r_3      
+         loadAI  r_arp,4   => r_4      
+         mult    r_3,r_4   => r_5      
+         storeAI r_5       => r_arp,12 
+         loadAI  r_arp,0   => r_6      
+         loadAI  r_arp,4   => r_7      
+         div     r_6,r_7   => r_8      
+         mult    r_8,r_7   => r_8      
+         sub     r_6,r_8   => r_9      
+         storeAI r_9       => r_arp,16 
+         loadAI  r_arp,8   => r_10     
+         loadAI  r_arp,0   => r_11     
+         div     r_10,r_11 => r_12     
+         storeAI r_12      => r_arp,20 
+         loadAI  r_arp,12  => r_13     
+         out     "d: ",r_13            
+         cloadAI r_arp,12  => r_14     
+         cstoreAIr_14      => r_arp,24 
+         cloadAI r_arp,13  => r_14     
+         cstoreAIr_14      => r_arp,25 
+         cloadAI r_arp,14  => r_14     
+         cstoreAIr_14      => r_arp,26 
+         cloadAI r_arp,15  => r_14     
+         cstoreAIr_14      => r_arp,27 
+         loadAI  r_arp,16  => r_15     
+         out     "e: ",r_15            
+         cloadAI r_arp,16  => r_16     
+         cstoreAIr_16      => r_arp,24 
+         cloadAI r_arp,17  => r_16     
+         cstoreAIr_16      => r_arp,25 
+         cloadAI r_arp,18  => r_16     
+         cstoreAIr_16      => r_arp,26 
+         cloadAI r_arp,19  => r_16     
+         cstoreAIr_16      => r_arp,27 
+         loadAI  r_arp,20  => r_17     
+         out     "f: ",r_17            
+         cloadAI r_arp,20  => r_18     
+         cstoreAIr_18      => r_arp,24 
+         cloadAI r_arp,21  => r_18     
+         cstoreAIr_18      => r_arp,25 
+         cloadAI r_arp,22  => r_18     
+         cstoreAIr_18      => r_arp,26 
+         cloadAI r_arp,23  => r_18     
+         cstoreAIr_18      => r_arp,27 
+         loadAI  r_arp,24  => r_19     
+         storeAI r_19      => r_arp,0  
+
+d: 20
+e: 1
+f: 4
+
+----Testing Plus Min----
+Program: nop                          
+         loadI   5        => r_0      
+         storeAI r_0      => r_arp,0  
+         loadI   4        => r_1      
+         storeAI r_1      => r_arp,4  
+         loadAI  r_arp,0  => r_2      
+         loadAI  r_arp,4  => r_3      
+         add     r_2,r_3  => r_4      
+         storeAI r_4      => r_arp,8  
+         loadAI  r_arp,4  => r_5      
+         rsubI   r_5,0    => r_6      
+         loadAI  r_arp,0  => r_7      
+         sub     r_7,r_6  => r_8      
+         storeAI r_8      => r_arp,12 
+         loadAI  r_arp,8  => r_9      
+         out     "c: ",r_9            
+         cloadAI r_arp,8  => r_10     
+         cstoreAIr_10     => r_arp,16 
+         cloadAI r_arp,9  => r_10     
+         cstoreAIr_10     => r_arp,17 
+         cloadAI r_arp,10 => r_10     
+         cstoreAIr_10     => r_arp,18 
+         cloadAI r_arp,11 => r_10     
+         cstoreAIr_10     => r_arp,19 
+         loadAI  r_arp,12 => r_11     
+         out     "d: ",r_11           
+         cloadAI r_arp,12 => r_12     
+         cstoreAIr_12     => r_arp,16 
+         cloadAI r_arp,13 => r_12     
+         cstoreAIr_12     => r_arp,17 
+         cloadAI r_arp,14 => r_12     
+         cstoreAIr_12     => r_arp,18 
+         cloadAI r_arp,15 => r_12     
+         cstoreAIr_12     => r_arp,19 
+         loadAI  r_arp,16 => r_13     
+         storeAI r_13     => r_arp,0  
+
+c: 9
+d: 9
+
+----Testing Read Print----
+Program: nop                          
+         loadI   1        => r_0      
+         storeAI r_0      => r_arp,0  
+         loadI   2        => r_1      
+         storeAI r_1      => r_arp,4  
+         in      "a? : "  => r_2      
+         storeAI r_2      => r_arp,0  
+         storeAI r_2      => r_arp,8  
+         in      "b? : "  => r_3      
+         storeAI r_3      => r_arp,4  
+         storeAI r_3      => r_arp,12 
+         loadAI  r_arp,0  => r_4      
+         out     "a: ",r_4            
+         cloadAI r_arp,0  => r_5      
+         cstoreAIr_5      => r_arp,16 
+         cloadAI r_arp,1  => r_5      
+         cstoreAIr_5      => r_arp,17 
+         cloadAI r_arp,2  => r_5      
+         cstoreAIr_5      => r_arp,18 
+         cloadAI r_arp,3  => r_5      
+         cstoreAIr_5      => r_arp,19 
+         loadAI  r_arp,4  => r_6      
+         out     "b: ",r_6            
+         cloadAI r_arp,4  => r_7      
+         cstoreAIr_7      => r_arp,16 
+         cloadAI r_arp,5  => r_7      
+         cstoreAIr_7      => r_arp,17 
+         cloadAI r_arp,6  => r_7      
+         cstoreAIr_7      => r_arp,18 
+         cloadAI r_arp,7  => r_7      
+         cstoreAIr_7      => r_arp,19 
+         loadAI  r_arp,8  => r_8      
+         out     "c: ",r_8            
+         cloadAI r_arp,8  => r_9      
+         cstoreAIr_9      => r_arp,16 
+         cloadAI r_arp,9  => r_9      
+         cstoreAIr_9      => r_arp,17 
+         cloadAI r_arp,10 => r_9      
+         cstoreAIr_9      => r_arp,18 
+         cloadAI r_arp,11 => r_9      
+         cstoreAIr_9      => r_arp,19 
+         loadAI  r_arp,12 => r_10     
+         out     "d: ",r_10           
+         cloadAI r_arp,12 => r_11     
+         cstoreAIr_11     => r_arp,16 
+         cloadAI r_arp,13 => r_11     
+         cstoreAIr_11     => r_arp,17 
+         cloadAI r_arp,14 => r_11     
+         cstoreAIr_11     => r_arp,18 
+         cloadAI r_arp,15 => r_11     
+         cstoreAIr_11     => r_arp,19 
+         loadAI  r_arp,16 => r_12     
+         storeAI r_12     => r_arp,0  
+
+a: 4
+b: 5
+c: 4
+d: 5
+
+----Testing Assign Decleration----
+Program: nop                          
+         loadI   69       => r_0      
+         storeAI r_0      => r_arp,0  
+         loadI   -1       => r_1      
+         storeAI r_1      => r_arp,4  
+         loadI   100      => r_2      
+         i2c     r_2      => r_2      
+         cstoreAIr_2      => r_arp,8  
+         loadI   104      => r_3      
+         i2c     r_3      => r_3      
+         cstoreAIr_3      => r_arp,9  
+         loadI   101      => r_3      
+         i2c     r_3      => r_3      
+         cstoreAIr_3      => r_arp,10 
+         loadI   114      => r_3      
+         i2c     r_3      => r_3      
+         cstoreAIr_3      => r_arp,11 
+         loadI   112      => r_3      
+         i2c     r_3      => r_3      
+         cstoreAIr_3      => r_arp,12 
+         cloadAI r_arp,9  => r_4      
+         cstoreAIr_4      => r_arp,13 
+         cloadAI r_arp,10 => r_4      
+         cstoreAIr_4      => r_arp,14 
+         cloadAI r_arp,11 => r_4      
+         cstoreAIr_4      => r_arp,15 
+         cloadAI r_arp,12 => r_4      
+         cstoreAIr_4      => r_arp,16 
+         loadAI  r_arp,0  => r_5      
+         out     "a: ",r_5            
+         cloadAI r_arp,0  => r_6      
+         cstoreAIr_6      => r_arp,17 
+         cloadAI r_arp,1  => r_6      
+         cstoreAIr_6      => r_arp,18 
+         cloadAI r_arp,2  => r_6      
+         cstoreAIr_6      => r_arp,19 
+         cloadAI r_arp,3  => r_6      
+         cstoreAIr_6      => r_arp,20 
+         loadAI  r_arp,4  => r_7      
+         out     "b: ",r_7            
+         cloadAI r_arp,4  => r_8      
+         cstoreAIr_8      => r_arp,17 
+         cloadAI r_arp,5  => r_8      
+         cstoreAIr_8      => r_arp,18 
+         cloadAI r_arp,6  => r_8      
+         cstoreAIr_8      => r_arp,19 
+         cloadAI r_arp,7  => r_8      
+         cstoreAIr_8      => r_arp,20 
+         cloadAI r_arp,8  => r_9      
+         loadAI  r_arp,17 => r_10     
+         loadI   1        => r_10     
+         cpush   r_9                  
+         push    r_10                 
+         cout    "c: "                
+         cloadAI r_arp,16 => r_10     
+         cpush   r_10                 
+         cloadAI r_arp,15 => r_10     
+         cpush   r_10                 
+         cloadAI r_arp,14 => r_10     
+         cpush   r_10                 
+         cloadAI r_arp,13 => r_10     
+         cpush   r_10                 
+         loadI   4        => r_10     
+         push    r_10                 
+         cout    "d: "                
+         loadI   1337     => r_11     
+         storeAI r_11     => r_arp,0  
+         loadI   0        => r_12     
+         storeAI r_12     => r_arp,4  
+         loadI   120      => r_13     
+         i2c     r_13     => r_13     
+         cstoreAIr_13     => r_arp,8  
+         loadI   100      => r_14     
+         i2c     r_14     => r_14     
+         cstoreAIr_14     => r_arp,17 
+         loadI   101      => r_14     
+         i2c     r_14     => r_14     
+         cstoreAIr_14     => r_arp,18 
+         loadI   114      => r_14     
+         i2c     r_14     => r_14     
+         cstoreAIr_14     => r_arp,19 
+         loadI   112      => r_14     
+         i2c     r_14     => r_14     
+         cstoreAIr_14     => r_arp,20 
+         cloadAI r_arp,17 => r_15     
+         cstoreAIr_15     => r_arp,13 
+         cloadAI r_arp,18 => r_15     
+         cstoreAIr_15     => r_arp,14 
+         cloadAI r_arp,19 => r_15     
+         cstoreAIr_15     => r_arp,15 
+         cloadAI r_arp,20 => r_15     
+         cstoreAIr_15     => r_arp,16 
+         loadAI  r_arp,0  => r_16     
+         out     "a: ",r_16           
+         cloadAI r_arp,0  => r_17     
+         cstoreAIr_17     => r_arp,21 
+         cloadAI r_arp,1  => r_17     
+         cstoreAIr_17     => r_arp,22 
+         cloadAI r_arp,2  => r_17     
+         cstoreAIr_17     => r_arp,23 
+         cloadAI r_arp,3  => r_17     
+         cstoreAIr_17     => r_arp,24 
+         loadAI  r_arp,4  => r_18     
+         out     "b: ",r_18           
+         cloadAI r_arp,4  => r_19     
+         cstoreAIr_19     => r_arp,21 
+         cloadAI r_arp,5  => r_19     
+         cstoreAIr_19     => r_arp,22 
+         cloadAI r_arp,6  => r_19     
+         cstoreAIr_19     => r_arp,23 
+         cloadAI r_arp,7  => r_19     
+         cstoreAIr_19     => r_arp,24 
+         cloadAI r_arp,8  => r_20     
+         loadAI  r_arp,21 => r_21     
+         loadI   1        => r_21     
+         cpush   r_20                 
+         push    r_21                 
+         cout    "c: "                
+         cloadAI r_arp,16 => r_21     
+         cpush   r_21                 
+         cloadAI r_arp,15 => r_21     
+         cpush   r_21                 
+         cloadAI r_arp,14 => r_21     
+         cpush   r_21                 
+         cloadAI r_arp,13 => r_21     
+         cpush   r_21                 
+         loadI   4        => r_21     
+         push    r_21                 
+         cout    "d: "                
+         loadAI  r_arp,21 => r_22     
+         storeAI r_22     => r_arp,0  
+
+a: 69
+b: -1
+c: d
+d: herp
+a: 1337
+b: 0
+c: x
+d: derp
+
+----Testing Comp Bool----
+Program: nop                           
+         loadI   -1        => r_0      
+         storeAI r_0       => r_arp,0  
+         loadI   0         => r_1      
+         storeAI r_1       => r_arp,4  
+         loadAI  r_arp,0   => r_2      
+         loadAI  r_arp,0   => r_3      
+         and     r_2,r_3   => r_4      
+         storeAI r_4       => r_arp,8  
+         loadAI  r_arp,0   => r_5      
+         loadAI  r_arp,4   => r_6      
+         or      r_5,r_6   => r_7      
+         storeAI r_7       => r_arp,12 
+         loadAI  r_arp,8   => r_8      
+         out     "c: ",r_8             
+         storeAI r_8       => r_arp,16 
+         loadAI  r_arp,12  => r_9      
+         out     "d: ",r_9             
+         storeAI r_9       => r_arp,20 
+         loadI   4         => r_10     
+         storeAI r_10      => r_arp,24 
+         loadI   5         => r_11     
+         storeAI r_11      => r_arp,28 
+         loadAI  r_arp,24  => r_12     
+         loadAI  r_arp,28  => r_13     
+         cmp_LT  r_12,r_13 => r_14     
+         storeAI r_14      => r_arp,32 
+         loadAI  r_arp,24  => r_15     
+         loadAI  r_arp,28  => r_16     
+         cmp_GT  r_15,r_16 => r_17     
+         storeAI r_17      => r_arp,36 
+         loadAI  r_arp,24  => r_18     
+         loadAI  r_arp,28  => r_19     
+         cmp_LE  r_18,r_19 => r_20     
+         storeAI r_20      => r_arp,40 
+         loadAI  r_arp,24  => r_21     
+         loadAI  r_arp,28  => r_22     
+         cmp_GE  r_21,r_22 => r_23     
+         storeAI r_23      => r_arp,44 
+         loadAI  r_arp,24  => r_24     
+         loadAI  r_arp,28  => r_25     
+         cmp_NE  r_24,r_25 => r_26     
+         storeAI r_26      => r_arp,48 
+         loadAI  r_arp,24  => r_27     
+         loadAI  r_arp,28  => r_28     
+         cmp_EQ  r_27,r_28 => r_29     
+         storeAI r_29      => r_arp,52 
+         loadAI  r_arp,32  => r_30     
+         out     "res0: ",r_30         
+         cloadAI r_arp,32  => r_31     
+         cstoreAIr_31      => r_arp,56 
+         cloadAI r_arp,33  => r_31     
+         cstoreAIr_31      => r_arp,57 
+         cloadAI r_arp,34  => r_31     
+         cstoreAIr_31      => r_arp,58 
+         cloadAI r_arp,35  => r_31     
+         cstoreAIr_31      => r_arp,59 
+         loadAI  r_arp,36  => r_32     
+         out     "res1: ",r_32         
+         cloadAI r_arp,36  => r_33     
+         cstoreAIr_33      => r_arp,56 
+         cloadAI r_arp,37  => r_33     
+         cstoreAIr_33      => r_arp,57 
+         cloadAI r_arp,38  => r_33     
+         cstoreAIr_33      => r_arp,58 
+         cloadAI r_arp,39  => r_33     
+         cstoreAIr_33      => r_arp,59 
+         loadAI  r_arp,40  => r_34     
+         out     "res2: ",r_34         
+         cloadAI r_arp,40  => r_35     
+         cstoreAIr_35      => r_arp,56 
+         cloadAI r_arp,41  => r_35     
+         cstoreAIr_35      => r_arp,57 
+         cloadAI r_arp,42  => r_35     
+         cstoreAIr_35      => r_arp,58 
+         cloadAI r_arp,43  => r_35     
+         cstoreAIr_35      => r_arp,59 
+         loadAI  r_arp,44  => r_36     
+         out     "res3: ",r_36         
+         cloadAI r_arp,44  => r_37     
+         cstoreAIr_37      => r_arp,56 
+         cloadAI r_arp,45  => r_37     
+         cstoreAIr_37      => r_arp,57 
+         cloadAI r_arp,46  => r_37     
+         cstoreAIr_37      => r_arp,58 
+         cloadAI r_arp,47  => r_37     
+         cstoreAIr_37      => r_arp,59 
+         loadAI  r_arp,48  => r_38     
+         out     "res4: ",r_38         
+         cloadAI r_arp,48  => r_39     
+         cstoreAIr_39      => r_arp,56 
+         cloadAI r_arp,49  => r_39     
+         cstoreAIr_39      => r_arp,57 
+         cloadAI r_arp,50  => r_39     
+         cstoreAIr_39      => r_arp,58 
+         cloadAI r_arp,51  => r_39     
+         cstoreAIr_39      => r_arp,59 
+         loadAI  r_arp,52  => r_40     
+         out     "res5: ",r_40         
+         cloadAI r_arp,52  => r_41     
+         cstoreAIr_41      => r_arp,56 
+         cloadAI r_arp,53  => r_41     
+         cstoreAIr_41      => r_arp,57 
+         cloadAI r_arp,54  => r_41     
+         cstoreAIr_41      => r_arp,58 
+         cloadAI r_arp,55  => r_41     
+         cstoreAIr_41      => r_arp,59 
+         loadAI  r_arp,56  => r_42     
+         storeAI r_42      => r_arp,0  
+
+c: -1
+d: -1
+res0: -1
+res1: 0
+res2: -1
+res3: 0
+res4: -1
+res5: 0
+
+----Testing If While----
+Program:   nop                                   
+           loadI   5         => r_0              
+           storeAI r_0       => r_arp,0          
+           loadI   4         => r_1              
+           storeAI r_1       => r_arp,4          
+           loadI   0         => r_2              
+           storeAI r_2       => r_arp,8          
+           loadI   1         => r_3              
+           storeAI r_3       => r_arp,12         
+           loadAI  r_arp,0   => r_4              
+           loadAI  r_arp,4   => r_5              
+           cmp_GT  r_4,r_5   => r_6              
+           cbr     r_6       -> n_8_23,n_8_38    
+n_8_23:    nop                                   
+           loadI   8         => r_7              
+           storeAI r_7       => r_arp,16         
+           loadAI  r_arp,16  => r_8              
+           storeAI r_8       => r_arp,16         
+           jumpI             -> endIf_8_1        
+n_8_38:    nop                                   
+           loadI   9         => r_9              
+           storeAI r_9       => r_arp,16         
+           loadAI  r_arp,16  => r_8              
+           storeAI r_10      => r_arp,16         
+endIf_8_1: nop                                   
+           loadAI  r_arp,0   => r_11             
+           loadAI  r_arp,4   => r_12             
+           cmp_LT  r_11,r_12 => r_13             
+           cbr     r_13      -> n_9_23,n_9_32    
+n_9_23:    nop                                   
+           loadI   5         => r_14             
+           loadI   5         => r_15             
+           add     r_14,r_15 => r_16             
+           storeAI r_16      => r_arp,20         
+           jumpI             -> endIf_9_9        
+n_9_32:    nop                                   
+           loadI   5         => r_17             
+           loadI   6         => r_18             
+           add     r_17,r_18 => r_19             
+           storeAI r_19      => r_arp,20         
+endIf_9_9: nop                                   
+           loadAI  r_arp,20  => r_20             
+           storeAI r_20      => r_arp,24         
+n_10_7:    nop                                   
+           loadAI  r_arp,8   => r_21             
+           loadAI  r_arp,0   => r_22             
+           cmp_LT  r_21,r_22 => r_23             
+           cbr     r_23      -> n_11_10,end_10_1 
+n_11_10:   nop                                   
+           loadI   2         => r_24             
+           loadAI  r_arp,12  => r_25             
+           mult    r_25,r_24 => r_26             
+           storeAI r_26      => r_arp,12         
+           loadI   1         => r_27             
+           loadAI  r_arp,8   => r_28             
+           add     r_28,r_27 => r_29             
+           storeAI r_29      => r_arp,8          
+           loadAI  r_arp,8   => r_30             
+           jumpI             -> n_10_7           
+end_10_1:  nop                                   
+           loadAI  r_arp,16  => r_31             
+           out     "res0: ",r_31                 
+           cloadAI r_arp,16  => r_32             
+           cstoreAIr_32      => r_arp,28         
+           cloadAI r_arp,17  => r_32             
+           cstoreAIr_32      => r_arp,29         
+           cloadAI r_arp,18  => r_32             
+           cstoreAIr_32      => r_arp,30         
+           cloadAI r_arp,19  => r_32             
+           cstoreAIr_32      => r_arp,31         
+           loadAI  r_arp,24  => r_33             
+           out     "res1: ",r_33                 
+           cloadAI r_arp,24  => r_34             
+           cstoreAIr_34      => r_arp,28         
+           cloadAI r_arp,25  => r_34             
+           cstoreAIr_34      => r_arp,29         
+           cloadAI r_arp,26  => r_34             
+           cstoreAIr_34      => r_arp,30         
+           cloadAI r_arp,27  => r_34             
+           cstoreAIr_34      => r_arp,31         
+           loadAI  r_arp,12  => r_35             
+           out     "res2: ",r_35                 
+           cloadAI r_arp,12  => r_36             
+           cstoreAIr_36      => r_arp,28         
+           cloadAI r_arp,13  => r_36             
+           cstoreAIr_36      => r_arp,29         
+           cloadAI r_arp,14  => r_36             
+           cstoreAIr_36      => r_arp,30         
+           cloadAI r_arp,15  => r_36             
+           cstoreAIr_36      => r_arp,31         
+           loadAI  r_arp,28  => r_37             
+           storeAI r_37      => r_arp,28         
+
+res0: 8
+res1: 11
+res2: 32

@@ -1,0 +1,68 @@
+----Testing Basics----
+([] start ([19] { ([79 19] ([28 79 19] integer) a) ; ([79 19] ([28 79 19] boolean) b) ; ([79 19] ([28 79 19] char) c) ; ([79 19] ([28 79 19] string) d) ; ([79 19] ([34 79 19] a) := ([36 79 19] 1337)) ; ([79 19] ([34 79 19] b) := ([36 79 19] true)) ; ([79 19] ([34 79 19] c) := ([36 79 19] 'g')) ; ([79 19] ([34 79 19] d) := ([36 79 19] "herp derp")) ; ([79 19] ([28 79 19] integer) w := ([31 79 19] 69)) ; ([79 19] ([28 79 19] boolean) x := ([31 79 19] false)) ; ([79 19] ([28 79 19] char) y := ([31 79 19] 'g')) ; ([87 19] ([28 87 19] string) z := ([31 87 19] "Hello World!")) ; }) <EOF>)
+----Testing Error 0----
+Errors: 
+Line 7:6 - Expected type 'Integer' but found 'Boolean'
+Line 8:6 - Expected type 'Boolean' but found 'Character'
+Line 9:6 - Expected type 'Character' but found 'String'
+Line 10:6 - Expected type 'String' but found 'Integer'
+Line 13:14 - Expected type 'Integer' but found 'Boolean'
+Line 14:14 - Expected type 'Boolean' but found 'Character'
+Line 15:11 - Expected type 'Character' but found 'String'
+Line 16:13 - Expected type 'String' but found 'Integer'
+----Testing Error 1----
+Errors: 
+Line 2:18 - Expected type 'Integer' but found 'Character'
+Line 3:18 - Expected type 'Integer' but found 'String'
+Line 4:15 - Expected type 'Integer' but found 'String'
+Line 5:18 - Expected type 'Boolean' but found 'Integer'
+Line 6:14 - Expected type 'Boolean' but found 'Integer'
+Line 6:20 - Expected type 'Boolean' but found 'Integer'
+Line 7:14 - Expected type 'Boolean' but found 'Integer'
+Line 7:19 - Expected type 'Boolean' but found 'Integer'
+Line 8:14 - Expected type 'Integer' but found 'Character'
+Line 8:20 - Expected type 'Integer' but found 'Character'
+Line 8:14 - Expected type 'Integer' but found 'Boolean'
+Line 9:19 - Expected type 'Integer' but found 'Character'
+Line 9:14 - Expected type 'Integer' but found 'Boolean'
+----Testing Error 2----
+Errors: 
+Line 8:1 - Illegal declaration, 'aa' already in scope.
+Line 9:1 - Illegal declaration, 'ab' already in scope.
+Line 10:1 - Illegal declaration, 'ac' already in scope.
+Line 11:1 - Illegal declaration, 'ad' already in scope.
+Line 14:17 - Expected type 'Boolean' but found 'Integer'
+Line 15:14 - Expected type 'Integer' but found 'Boolean'
+Line 16:28 - Expected type 'Character' but found 'Integer'
+Line 19:7 - Expected type 'Boolean' but found 'Integer'
+Line 20:7 - Expected type 'Boolean' but found 'Integer'
+Line 25:14 - Expected type 'Boolean' but found 'Character'
+String reads are not supported, at : read(ad)
+Line 26:14 - Expected type 'Character' but found 'String'
+Line 27:14 - Expected type 'String' but found 'Integer'
+Line 28:14 - Expected type 'Integer' but found 'Void'
+Line 29:14 - Expected type 'Integer' but found 'Void'
+Line 32:14 - Expected type 'Integer' but found 'Boolean'
+Line 33:14 - Expected type 'Boolean' but found 'Character'
+Line 34:14 - Expected type 'Character' but found 'String'
+Line 35:14 - Expected type 'String' but found 'Integer'
+Line 36:14 - Expected type 'Integer' but found 'Void'
+Line 37:14 - Expected type 'Integer' but found 'Void'
+Line 40:14 - Expected type 'Integer' but found 'Boolean'
+Line 41:14 - Expected type 'Boolean' but found 'Character'
+Line 42:14 - Expected type 'Character' but found 'String'
+Line 43:14 - Expected type 'String' but found 'Integer'
+Line 44:20 - Expected type 'Integer' but found 'Boolean'
+Line 45:26 - Expected type 'Integer' but found 'Boolean'
+Line 48:14 - Expected type 'Integer' but found 'Boolean'
+Line 49:14 - Expected type 'Boolean' but found 'Character'
+Line 50:14 - Expected type 'Character' but found 'String'
+Line 51:14 - Expected type 'String' but found 'Integer'
+Line 52:14 - Expected type 'Integer' but found 'Boolean'
+----Testing Error 3----
+Errors: 
+line 1:10 - mismatched input 'ba' expecting {<EOF>, AND, OR, '==', '>=', '>', '<=', '<', '-', '%', '<>', '+', '/', '*'}
+----Testing Expressions----
+([] start ([19] { ([79 19] ([28 79 19] integer) a := ([31 79 19] 0)) ; ([79 19] ([28 79 19] integer) b := ([31 79 19] 1)) ; ([79 19] ([28 79 19] integer) c := ([31 79 19] 2)) ; ([79 19] ([28 79 19] integer) d := ([31 79 19] 4)) ; ([79 19] ([28 79 19] boolean) aa := ([31 79 19] true)) ; ([79 19] ([28 79 19] char) ab := ([31 79 19] 'd')) ; ([79 19] ([28 79 19] string) ac := ([31 79 19] "gg")) ; ([79 19] ([28 79 19] integer) e := ([31 79 19] if ([39 31 79 19] ([4 39 31 79 19] d) ([108 39 31 79 19] >) ([109 39 31 79 19] b)) then ([41 31 79 19] 69) else ([43 31 79 19] 96))) ; ([79 19] ([28 79 19] boolean) f := ([31 79 19] if ([39 31 79 19] ([4 39 31 79 19] c) ([108 39 31 79 19] <) ([109 39 31 79 19] d)) then ([41 31 79 19] true) else ([43 31 79 19] false))) ; ([79 19] ([28 79 19] char) g := ([31 79 19] if ([39 31 79 19] ([4 39 31 79 19] b) ([108 39 31 79 19] >) ([109 39 31 79 19] a)) then ([41 31 79 19] 'b') else ([43 31 79 19] 'a'))) ; ([79 19] ([28 79 19] string) h := ([31 79 19] if ([39 31 79 19] ([4 39 31 79 19] b) ([108 39 31 79 19] >) ([109 39 31 79 19] c)) then ([41 31 79 19] "gg") else ([43 31 79 19] "wp"))) ; ([79 19] while ([47 79 19] ([4 47 79 19] a) ([108 47 79 19] >) ([109 47 79 19] b)) do ([49 79 19] ([4 49 79 19] a) ([104 49 79 19] +) ([105 49 79 19] b))) ; ([79 19] while ([47 79 19] ([4 47 79 19] a) ([108 47 79 19] <) ([109 47 79 19] b)) do ([49 79 19] ([4 49 79 19] a) ([104 49 79 19] +) ([105 49 79 19] b))) ; ([79 19] while ([47 79 19] false) do ([49 79 19] ([4 49 79 19] a) ([104 49 79 19] -) ([105 49 79 19] b))) ; ([79 19] ([28 79 19] integer) i := ([31 79 19] read ( a ))) ; ([79 19] ([28 79 19] boolean) ia := ([31 79 19] read ( aa ))) ; ([79 19] ([28 79 19] char) ib := ([31 79 19] read ( ab ))) ; ([79 19] ([28 79 19] integer) j := ([31 79 19] print ( ([64 31 79 19] 69) ))) ; ([79 19] ([28 79 19] integer) k := ([31 79 19] print ( ([64 31 79 19] a) ))) ; ([79 19] ([28 79 19] integer) l := ([31 79 19] print ( ([64 31 79 19] ([4 64 31 79 19] c) ([100 64 31 79 19] *) ([101 64 31 79 19] d)) ))) ; ([79 19] ([28 79 19] boolean) m := ([31 79 19] print ( ([64 31 79 19] ([4 64 31 79 19] true) ([112 64 31 79 19] or) ([113 64 31 79 19] false)) ))) ; ([79 19] ([28 79 19] char) n := ([31 79 19] print ( ([64 31 79 19] 'd') ))) ; ([79 19] ([28 79 19] string) o := ([31 79 19] print ( ([64 31 79 19] "1337") ))) ; ([79 19] ([28 79 19] integer) oa := ([31 79 19] print ( ([64 31 79 19] if ([39 64 31 79 19] ([4 39 64 31 79 19] a) ([108 39 64 31 79 19] >) ([109 39 64 31 79 19] b)) then ([41 64 31 79 19] 4) else ([43 64 31 79 19] 5)) ))) ; ([79 19] ([28 79 19] integer) p := ([31 79 19] ( ([75 31 79 19] 4) ))) ; ([79 19] ([28 79 19] integer) q := ([31 79 19] ( ([75 31 79 19] ([4 75 31 79 19] a) ([104 75 31 79 19] +) ([105 75 31 79 19] b)) ))) ; ([79 19] ([28 79 19] boolean) r := ([31 79 19] ( ([75 31 79 19] if ([39 75 31 79 19] ([4 39 75 31 79 19] a) ([108 39 75 31 79 19] >) ([109 39 75 31 79 19] b)) then ([41 75 31 79 19] true) else ([43 75 31 79 19] false)) ))) ; ([79 19] ([28 79 19] char) s := ([31 79 19] ( ([75 31 79 19] 'a') ))) ; ([79 19] ([28 79 19] string) t := ([31 79 19] ( ([75 31 79 19] "Hello World!") ))) ; ([79 19] ([28 79 19] integer) u := ([31 79 19] ( ([75 31 79 19] ([4 75 31 79 19] 1) ([104 75 31 79 19] +) ([105 75 31 79 19] ( ([75 105 75 31 79 19] ([4 75 105 75 31 79 19] c) ([100 75 105 75 31 79 19] *) ([101 75 105 75 31 79 19] d)) ))) ))) ; ([79 19] ([28 79 19] integer) v := ([31 79 19] { ([87 31 79 19] 69) ; })) ; ([79 19] ([28 79 19] integer) w := ([31 79 19] { ([79 31 79 19] 'd') ; ([79 31 79 19] "gg") ; ([79 31 79 19] true) ; ([87 31 79 19] 69) ; })) ; ([79 19] ([28 79 19] boolean) x := ([31 79 19] { ([87 31 79 19] true) ; })) ; ([79 19] ([28 79 19] char) y := ([31 79 19] { ([87 31 79 19] 'd') ; })) ; ([87 19] ([28 87 19] string) z := ([31 87 19] { ([87 31 87 19] "derp") ; })) ; }) <EOF>)
+----Testing Operations----
+([] start ([19] { ([79 19] ([28 79 19] integer) a := ([31 79 19] ([4 31 79 19] 8) ([100 31 79 19] *) ([101 31 79 19] 4))) ; ([79 19] ([28 79 19] integer) b := ([31 79 19] ([4 31 79 19] 8) ([100 31 79 19] /) ([101 31 79 19] 4))) ; ([79 19] ([28 79 19] integer) c := ([31 79 19] ([4 31 79 19] 8) ([100 31 79 19] %) ([101 31 79 19] 4))) ; ([79 19] ([28 79 19] integer) d := ([31 79 19] ([4 31 79 19] a) ([100 31 79 19] *) ([101 31 79 19] b))) ; ([79 19] ([28 79 19] integer) e := ([31 79 19] ([4 31 79 19] a) ([100 31 79 19] /) ([101 31 79 19] b))) ; ([79 19] ([28 79 19] integer) f := ([31 79 19] ([4 31 79 19] a) ([100 31 79 19] %) ([101 31 79 19] b))) ; ([79 19] ([28 79 19] integer) g := ([31 79 19] ([4 31 79 19] 8) ([104 31 79 19] +) ([105 31 79 19] 4))) ; ([79 19] ([28 79 19] integer) h := ([31 79 19] ([4 31 79 19] 8) ([104 31 79 19] -) ([105 31 79 19] 4))) ; ([79 19] ([28 79 19] integer) i := ([31 79 19] ([4 31 79 19] g) ([104 31 79 19] +) ([105 31 79 19] h))) ; ([79 19] ([28 79 19] integer) j := ([31 79 19] ([4 31 79 19] g) ([104 31 79 19] -) ([105 31 79 19] h))) ; ([79 19] ([28 79 19] integer) k := ([31 79 19] ([25 31 79 19] -) ([26 31 79 19] 4))) ; ([79 19] ([28 79 19] integer) l := ([31 79 19] ([25 31 79 19] -) ([26 31 79 19] b))) ; ([79 19] ([28 79 19] boolean) m := ([31 79 19] ([25 31 79 19] not) ([26 31 79 19] true))) ; ([79 19] ([28 79 19] boolean) n := ([31 79 19] ([25 31 79 19] not) ([26 31 79 19] m))) ; ([79 19] ([28 79 19] boolean) o := ([31 79 19] ([4 31 79 19] true) ([112 31 79 19] and) ([113 31 79 19] false))) ; ([79 19] ([28 79 19] boolean) p := ([31 79 19] ([4 31 79 19] true) ([112 31 79 19] or) ([113 31 79 19] false))) ; ([79 19] ([28 79 19] boolean) q := ([31 79 19] ([4 31 79 19] o) ([112 31 79 19] and) ([113 31 79 19] p))) ; ([79 19] ([28 79 19] boolean) r := ([31 79 19] ([4 31 79 19] o) ([112 31 79 19] or) ([113 31 79 19] p))) ; ([79 19] ([28 79 19] boolean) s := ([31 79 19] ([4 31 79 19] 6) ([108 31 79 19] <=) ([109 31 79 19] 9))) ; ([79 19] ([28 79 19] boolean) t := ([31 79 19] ([4 31 79 19] 6) ([108 31 79 19] <) ([109 31 79 19] 9))) ; ([79 19] ([28 79 19] boolean) u := ([31 79 19] ([4 31 79 19] 6) ([108 31 79 19] >=) ([109 31 79 19] 9))) ; ([79 19] ([28 79 19] boolean) v := ([31 79 19] ([4 31 79 19] 6) ([108 31 79 19] >) ([109 31 79 19] 9))) ; ([79 19] ([28 79 19] boolean) w := ([31 79 19] ([4 31 79 19] 6) ([108 31 79 19] ==) ([109 31 79 19] 9))) ; ([79 19] ([28 79 19] boolean) x := ([31 79 19] ([4 31 79 19] 6) ([108 31 79 19] <>) ([109 31 79 19] 9))) ; ([79 19] ([28 79 19] boolean) y := ([31 79 19] ([4 31 79 19] true) ([108 31 79 19] ==) ([109 31 79 19] false))) ; ([79 19] ([28 79 19] boolean) z := ([31 79 19] ([4 31 79 19] true) ([108 31 79 19] <>) ([109 31 79 19] false))) ; ([79 19] ([28 79 19] boolean) aa := ([31 79 19] ([4 31 79 19] 'g') ([108 31 79 19] ==) ([109 31 79 19] 'g'))) ; ([87 19] ([28 87 19] boolean) ab := ([31 87 19] ([4 31 87 19] 'g') ([108 31 87 19] <>) ([109 31 87 19] 'g'))) ; }) <EOF>)

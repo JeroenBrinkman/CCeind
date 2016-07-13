@@ -26,3 +26,6 @@ The RUN mode compiles the program and immediatly executes the generated iloc pro
 FILE mode compiles the program and stores it in <filename>.iloc.
 
 USAGE : TempNameCompiler <filepath> <mode>
+
+
+The code can found at https://github.com/JeroenBrinkman/CCeind.
