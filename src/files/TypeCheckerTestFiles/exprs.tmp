@@ -23,7 +23,6 @@ start {
 	integer i  := read(a);
 	boolean ia := read(aa);
 	char ib    := read(ab);
-	string ic  := read(ac);
 	
 	#Print#
 	integer j := print(69);

@@ -37,6 +37,4 @@ start {
 	boolean z := true <> false;
 	boolean aa := 'g' == 'g';
 	boolean ab := 'g' <> 'g';
-	boolean ac := "gg" == "wp";
-	boolean ad := "gg" <> "wp";
 }
