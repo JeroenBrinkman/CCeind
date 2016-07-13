@@ -111,39 +111,16 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	private void returnResult(ParseTree from, ParseTree to, String fromid, String toid) {
 		Type type = checkResult.getType(from);
-		if (mM.hasReg(from)) {
+		if (mM.hasReg(from) || fromid != null || mM.hasMemory(from)) {
 			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cstoreAI, reg(from), arp, offset(to, toid));
 			} else if (type.equals(Type.STRING)) {
-				// TODO gaat dit goed?
 				moveString(from, to, false, fromid, toid);
 			} else {
 				emit(OpCode.storeAI, reg(from), arp, offset(to, toid));
-			}
-		} else if (mM.hasMemory(from)) {
-			if (type.equals(Type.CHAR)) {
-				// emit(OpCode.cloadAI, arp, offset(from, fromid), reg(from));
-				emit(OpCode.cstoreAI, reg(from), arp, offset(to, toid));
-			} else if (type.equals(Type.STRING)) {
-				moveString(from, to, false, fromid, toid);
-			} else {
-				// emit(OpCode.loadAI, arp, offset(from, fromid), reg(from));
-				emit(OpCode.storeAI, reg(from), arp, offset(to, toid));
-			}
-		} else if (fromid != null) {
-			if (type.equals(Type.CHAR)) {
-				// emit(OpCode.cloadAI, arp, offset(from, fromid), reg(to));
-				emit(OpCode.cstoreAI, reg(to), arp, offset(to, toid));
-			} else if (type.equals(Type.STRING)) {
-				moveString(from, to, false, fromid, toid);
-			} else {
-				// emit(OpCode.loadAI, arp, offset(from, fromid), reg(to));
-				emit(OpCode.storeAI, reg(to), arp, offset(to, toid));
 			}
 		} else {
-			System.out.println("return error state");
-			System.out.println("from : " + from.getText());
-			System.out.println("to : " + to.getText());
+			// No return needed
 		}
 	}
 

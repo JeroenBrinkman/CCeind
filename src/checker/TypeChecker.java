@@ -174,6 +174,7 @@ public class TypeChecker extends TempNameBaseListener {
 	@Override
 	public void exitCompExpr(CompExprContext ctx) {
 		if (ctx.compOp().getText().equals("<>") || ctx.compOp().getText().equals("==")) {
+			this.checkNotType(ctx.expr(1), Type.STRING);
 			checkType(ctx.expr(1), getType(ctx.expr(0)));
 		} else {
 			checkType(ctx.expr(0), Type.INT);
@@ -273,9 +274,12 @@ public class TypeChecker extends TempNameBaseListener {
 		for (int i = 0; i < ctx.ID().size(); i++) {
 			String targetString = ctx.ID(i).toString();
 			if (!sT.contains(targetString)) {
-				errors.add(" Attempting to read for a undeclared variable '" + ctx.ID().toString() + "' !");
+				errors.add("Attempting to read for a undeclared variable '" + ctx.ID().toString() + "' !");
 			}
 			tps[i] = sT.getType(ctx.ID(i).getText());
+			if(tps[i].equals(Type.STRING)){
+				errors.add("String reads are not supported, at : " + ctx.getText());
+			}
 		}
 
 		result.setReadTypes(ctx, tps);
