@@ -1,0 +1,21 @@
+start{
+	integer n0;
+	integer n1;
+	integer n2;
+	read(n0);
+	if n0 <= 1 then{
+		print(1);
+	} else{
+		n1 := 1;
+		n2 := 1;
+		integer i := 2;
+		while i < n0 do {
+			integer temp := n1 + n2;
+			n2 := n1;
+			n1 := temp;
+			i := i + 1;
+		};
+		print(n1);
+	};
+
+}
