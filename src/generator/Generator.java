@@ -43,7 +43,10 @@ public class Generator extends TempNameBaseVisitor<String> {
 		return this.prog;
 	}
 
-	private void moveString(ParseTree from, ParseTree to, boolean closeScope, String fromid, String toid) {
+	/**
+	 * Helpfunction for TypedStore stores a string
+	 */
+	private void storeString(ParseTree from, ParseTree to, boolean closeScope, String fromid, String toid) {
 		// SETUP
 		int[] stringData = mM.getSizeAndOffset(from, fromid);
 		if (closeScope) {
@@ -59,9 +62,20 @@ public class Generator extends TempNameBaseVisitor<String> {
 		}
 	}
 
+	/**
+	 * Store the result of a child ctx as the result of the parent ctx (another
+	 * ctx). IF an id is know it will store the value of the id as the result of
+	 * the parent.
+	 * 
+	 * Closes the scope if necesary
+	 * 
+	 * @requires from != null
+	 * @requires to != null
+	 */
 	private void typedStore(ParseTree from, ParseTree to, boolean closeScope, String id) {
 		if (id != null) {
-
+			// hoeft volgens mij niet
+			System.out.println("yup, het moest dus wel");
 		} else if (mM.hasMemory(from)) {
 			if (checkResult.getType(from).equals(Type.CHAR)) {
 				emit(OpCode.cloadAI, arp, offset(from), reg(to));
@@ -69,7 +83,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 					mM.closeScope();
 				emit(OpCode.cstoreAI, reg(to), arp, offset(to));
 			} else if (checkResult.getType(from).equals(Type.STRING)) {
-				this.moveString(from, to, closeScope, null, id);
+				this.storeString(from, to, closeScope, null, id);
 			} else {
 				emit(OpCode.loadAI, arp, offset(from), reg(to));
 				if (closeScope)
@@ -90,6 +104,12 @@ public class Generator extends TempNameBaseVisitor<String> {
 		}
 	}
 
+	/**
+	 * Loads an id from memory for use by the given node
+	 * 
+	 * @requires id != null
+	 * @requires ctx != null
+	 */
 	private void typedLoad(ParseTree ctx, String id) {
 		Type type = checkResult.getType(ctx);
 		if (type.equals(Type.CHAR)) {
@@ -101,21 +121,36 @@ public class Generator extends TempNameBaseVisitor<String> {
 		}
 	}
 
+	/**
+	 * Improved visit method. Visits the node and if the result of the node was
+	 * stored to an id loads that value into the register of the node.
+	 * 
+	 * @requires ctx != null
+	 * @return
+	 */
 	private String visitH(ParseTree ctx) {
 		String id0 = visit(ctx);
-		if (id0 != null) {
+		if (id0 != null && mM.hasMemory(ctx)) {
 			typedLoad(ctx, id0);
 		}
 		return id0;
 	}
 
+	/**
+	 * Generates the necesary iloc code to return the result of one node and
+	 * load it as input into the other node. If an id is known it will use that
+	 * instead of the node.
+	 * 
+	 * @requires from != null
+	 * @requires to != null
+	 */
 	private void returnResult(ParseTree from, ParseTree to, String fromid, String toid) {
 		Type type = checkResult.getType(from);
 		if (mM.hasReg(from) || fromid != null || mM.hasMemory(from)) {
 			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cstoreAI, reg(from), arp, offset(to, toid));
 			} else if (type.equals(Type.STRING)) {
-				moveString(from, to, false, fromid, toid);
+				storeString(from, to, false, fromid, toid);
 			} else {
 				emit(OpCode.storeAI, reg(from), arp, offset(to, toid));
 			}
@@ -166,9 +201,19 @@ public class Generator extends TempNameBaseVisitor<String> {
 		return new Label(result);
 	}
 
+	/**
+	 * If the id is not null it will look up the memory offset of this id, or
+	 * create a new one if it doesnt exist.
+	 * 
+	 * If the id is null it will look up the memory offset of the return value
+	 * of the node, or create a new one if it doesnt exist.
+	 * 
+	 * @requires node != null
+	 * @ensures result>0
+	 */
 	private Num offset(ParseTree node, String id) {
 		int size = 0;
-		if (checkResult.getType(node).equals(Type.INT)|| checkResult.getType(node).equals(Type.BOOL)) {
+		if (checkResult.getType(node).equals(Type.INT) || checkResult.getType(node).equals(Type.BOOL)) {
 			size = Machine.INT_SIZE;
 		} else if (checkResult.getType(node).equals(Type.CHAR)) {
 			size = Machine.DEFAULT_CHAR_SIZE;
@@ -177,10 +222,20 @@ public class Generator extends TempNameBaseVisitor<String> {
 		return offset;
 	}
 
+	/**
+	 * @see offset(node, null);
+	 */
 	private Num offset(ParseTree node) {
 		return offset(node, null);
 	}
 
+	/**
+	 * Gives the reg that belongs to this node, reserves a new reg if the node
+	 * does not have a reg.
+	 * 
+	 * @requires node != null
+	 * @ensure result != null
+	 */
 	private Reg reg(ParseTree node) {
 		Reg reg;
 		// IF the value is ONLY stored in memory, it should be loaded into the
@@ -227,8 +282,14 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitCompExpr(CompExprContext ctx) {
-		visitH(ctx.expr(0));
-		visitH(ctx.expr(1));
+		String id1 = visitH(ctx.expr(0));
+		String id2 = visitH(ctx.expr(1));
+		if (id1 != null) {
+			typedLoad(ctx.expr(0), id1);
+		}
+		if (id2 != null) {
+			typedLoad(ctx.expr(1), id2);
+		}
 		String compOp = ctx.compOp().getText();
 		switch (compOp) {
 		case ("<="):
@@ -263,14 +324,18 @@ public class Generator extends TempNameBaseVisitor<String> {
 		Label elsez = elseExists ? label(ctx.expr(2)) : endIf;
 		emit(OpCode.cbr, reg(ctx.expr(0)), label(ctx.expr(1)), elsez);
 		emit(label(ctx.expr(1)), OpCode.nop);
-
 		String id = visitH(ctx.expr(1));
+		if (id != null) {
+			typedLoad(ctx.expr(1), id);
+		}
 		returnResult(ctx.expr(1), ctx, id, id);
 		emit(OpCode.jumpI, endIf);
 		if (elseExists) {
 			emit(elsez, OpCode.nop);
 			id = visitH(ctx.expr(2));
-
+			if (id != null) {
+				typedLoad(ctx.expr(1), id);
+			}
 			returnResult(ctx.expr(2), ctx, id, id);
 		}
 		emit(endIf, OpCode.nop);
@@ -285,6 +350,9 @@ public class Generator extends TempNameBaseVisitor<String> {
 			visitH(ctx.expr(i));
 		}
 		String id = visitH(ctx.expr(last));
+		if (id != null) {
+			typedLoad(ctx.expr(last), id);
+		}
 		typedStore(ctx.expr(last), ctx, true, id);
 		return null;
 	}
@@ -295,6 +363,10 @@ public class Generator extends TempNameBaseVisitor<String> {
 		if (ctx.expr().size() > 1) {
 			for (int i = 0; i < ctx.expr().size(); i++) {
 				String id = visitH(ctx.expr(i));
+
+				if (id != null) {
+					typedLoad(ctx.expr(i), id);
+				}
 				type = checkResult.getType(ctx.expr(i));
 				if (type.equals(Type.CHAR)) {
 					emit(OpCode.loadI, new Num(1), reg(ctx));
@@ -305,7 +377,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 					int[] stringData = mM.getSizeAndOffset(ctx.expr(i), id);
 					// Push chars
 					for (int j = stringData[0]; j > 0; j--) {
-						emit(OpCode.cloadAI, arp, new Num(stringData[1] + j * Machine.DEFAULT_CHAR_SIZE -1), reg(ctx));
+						emit(OpCode.cloadAI, arp, new Num(stringData[1] + j * Machine.DEFAULT_CHAR_SIZE - 1), reg(ctx));
 
 						emit(OpCode.cpush, reg(ctx));
 					}
@@ -316,11 +388,14 @@ public class Generator extends TempNameBaseVisitor<String> {
 					emit(OpCode.cout, new Str(ctx.expr(i).getText() + ": "));
 				} else {
 					emit(OpCode.out, new Str(ctx.expr(i).getText() + ": "), reg(ctx.expr(i)));
-					moveString(ctx.expr(0), ctx, false, id, null);
+					storeString(ctx.expr(0), ctx, false, id, null);
 				}
 			}
 		} else {
 			String id = visitH(ctx.expr(0));
+			if (id != null) {
+				typedLoad(ctx.expr(0), id);
+			}
 			type = checkResult.getType(ctx.expr(0));
 			if (type.equals(Type.CHAR)) {
 				emit(OpCode.loadI, new Num(1), reg(ctx));
@@ -342,7 +417,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 				emit(OpCode.cout, new Str(ctx.expr(0).getText() + ": "));
 
-				moveString(ctx.expr(0), ctx, false, id, null);
+				storeString(ctx.expr(0), ctx, false, id, null);
 			} else {
 				emit(OpCode.out, new Str(ctx.expr(0).getText() + ": "), reg(ctx.expr(0)));
 				returnResult(ctx.expr(0), ctx, null, null);
@@ -361,7 +436,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 				emit(OpCode.cpop, reg(ctx));
 				emit(OpCode.cstoreAI, reg(ctx), arp, offset(ctx, ctx.ID(i).getText()));
 			} else if (types[i].equals(Type.STRING)) {
-				// TODO not supported by our memory/registry manager, too much
+				// Not supported by our memory/registry manager, too much
 				// work to edit it in properly
 			} else {
 				emit(OpCode.in, new Str(ctx.ID(i).getText() + "? : "), reg(ctx));
@@ -377,8 +452,14 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitMultExpr(MultExprContext ctx) {
-		visitH(ctx.expr(0));
-		visitH(ctx.expr(1));
+		String id1 = visitH(ctx.expr(0));
+		String id2 = visitH(ctx.expr(1));
+		if (id1 != null) {
+			typedLoad(ctx.expr(0), id1);
+		}
+		if (id2 != null) {
+			typedLoad(ctx.expr(1), id2);
+		}
 		if (ctx.multOp().getText().equals("*")) {
 			// Times
 			emit(OpCode.mult, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
@@ -400,6 +481,12 @@ public class Generator extends TempNameBaseVisitor<String> {
 	public String visitPlusExpr(PlusExprContext ctx) {
 		String id1 = visitH(ctx.expr(0));
 		String id2 = visitH(ctx.expr(1));
+		if (id1 != null) {
+			typedLoad(ctx.expr(0), id1);
+		}
+		if (id2 != null) {
+			typedLoad(ctx.expr(1), id2);
+		}
 		if (checkResult.getType(ctx).equals(Type.INT)) {
 			if (ctx.plusOp().getText().equals("+")) {
 				emit(OpCode.add, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
@@ -425,7 +512,10 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitPrfExpr(PrfExprContext ctx) {
-		visitH(ctx.expr());
+		String id = visitH(ctx.expr());
+		if (id != null) {
+			typedLoad(ctx.expr(), id);
+		}
 
 		if (ctx.prfOp().getText().equals("-")) {
 			emit(OpCode.rsubI, reg(ctx.expr()), new Num(0), reg(ctx));
@@ -444,7 +534,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 			if (type.equals(Type.CHAR)) {
 				emit(OpCode.cstoreAI, reg(ctx.expr()), arp, offset(ctx.ID(), ctx.ID().getText()));
 			} else if (type.equals(Type.STRING)) {
-				moveString(ctx.expr(), ctx, false, null, ctx.ID().getText());
+				storeString(ctx.expr(), ctx, false, null, ctx.ID().getText());
 			} else {
 				emit(OpCode.storeAI, reg(ctx.expr()), arp, offset(ctx.ID(), ctx.ID().getText()));
 			}
@@ -469,10 +559,13 @@ public class Generator extends TempNameBaseVisitor<String> {
 	@Override
 	public String visitAssExpr(AssExprContext ctx) {
 		String id = visitH(ctx.expr());
+		if (id != null) {
+			typedLoad(ctx.expr(), id);
+		}
 		if (checkResult.getType(ctx).equals(Type.CHAR)) {
 			emit(OpCode.cstoreAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
 		} else if (checkResult.getType(ctx).equals(Type.STRING)) {
-			moveString(ctx.expr(), ctx, false, id, ctx.target().getText());
+			storeString(ctx.expr(), ctx, false, id, ctx.target().getText());
 		} else {
 			emit(OpCode.storeAI, reg(ctx.expr()), this.arp, offset(ctx.target(), ctx.target().getText()));
 		}
@@ -481,8 +574,14 @@ public class Generator extends TempNameBaseVisitor<String> {
 
 	@Override
 	public String visitBoolExpr(BoolExprContext ctx) {
-		visitH(ctx.expr(0));
-		visitH(ctx.expr(1));
+		String id1 = visitH(ctx.expr(0));
+		String id2 = visitH(ctx.expr(1));
+		if (id1 != null) {
+			typedLoad(ctx.expr(0), id1);
+		}
+		if (id2 != null) {
+			typedLoad(ctx.expr(1), id2);
+		}
 		if (ctx.boolOp().getText().contains("o") || ctx.boolOp().getText().contains("O")) {
 			emit(OpCode.or, reg(ctx.expr(0)), reg(ctx.expr(1)), reg(ctx));
 		} else {
