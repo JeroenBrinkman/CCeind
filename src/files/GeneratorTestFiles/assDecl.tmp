@@ -3,16 +3,10 @@ start{
 	boolean b := true;
 	char c    := 'd';
 	string d  := "herp";
-	print(a);
-	print(b);
-	print(c);
-	print(d);
+	print(a,b,c,d);
 	a := 1337;
 	b := false;
 	c := 'x';
 	d := "derp";	
-	print(a);
-	print(b);
-	print(c);
-	print(d);
+	print(a,b,c,d);
 }

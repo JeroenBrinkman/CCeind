@@ -303,10 +303,9 @@ public class Generator extends TempNameBaseVisitor<String> {
 					emit(OpCode.cout, new Str(ctx.expr(i).getText() + ": "));
 				} else if (type.equals(Type.STRING)) {
 					int[] stringData = mM.getSizeAndOffset(ctx.expr(i), id);
-
 					// Push chars
 					for (int j = stringData[0]; j > 0; j--) {
-						emit(OpCode.cloadAI, arp, new Num(stringData[1] + j * Machine.DEFAULT_CHAR_SIZE), reg(ctx));
+						emit(OpCode.cloadAI, arp, new Num(stringData[1] + j * Machine.DEFAULT_CHAR_SIZE -1), reg(ctx));
 
 						emit(OpCode.cpush, reg(ctx));
 					}
@@ -317,6 +316,7 @@ public class Generator extends TempNameBaseVisitor<String> {
 					emit(OpCode.cout, new Str(ctx.expr(i).getText() + ": "));
 				} else {
 					emit(OpCode.out, new Str(ctx.expr(i).getText() + ": "), reg(ctx.expr(i)));
+					moveString(ctx.expr(0), ctx, false, id, null);
 				}
 			}
 		} else {
@@ -326,7 +326,6 @@ public class Generator extends TempNameBaseVisitor<String> {
 				emit(OpCode.loadI, new Num(1), reg(ctx));
 				emit(OpCode.cpush, reg(ctx.expr(0)));
 				emit(OpCode.push, reg(ctx));
-
 				emit(OpCode.cout, new Str(ctx.expr(0).getText() + ": "));
 				returnResult(ctx.expr(0), ctx, null, null);
 			} else if (type.equals(Type.STRING)) {

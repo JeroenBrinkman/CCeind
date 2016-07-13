@@ -6,7 +6,5 @@ start{
 	integer d := a * b;
 	integer e := a % b;
 	integer f := c / a;
-	print(d);
-	print(e);
-	print(f);
+	print(d, e, f);
 }

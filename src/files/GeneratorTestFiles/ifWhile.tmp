@@ -11,7 +11,5 @@ start{
 		res2 := res2 * 2;
 		i := i+1;
 	};
-	print(res0);
-	print(res1);
-	print(res2);
+	print(res0, res1, res2);
 }

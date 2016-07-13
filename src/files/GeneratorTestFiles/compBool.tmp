@@ -17,10 +17,5 @@ start{
 	boolean res4 := a0 <> a1;
 	boolean res5 := a0 == a1; 
 
-	print(res0);
-	print(res1);
-	print(res2);
-	print(res3);
-	print(res4);
-	print(res5);
+	print(res0,res1,res2,res3,res4,res5);
 }
