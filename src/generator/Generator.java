@@ -75,7 +75,6 @@ public class Generator extends TempNameBaseVisitor<String> {
 	private void typedStore(ParseTree from, ParseTree to, boolean closeScope, String id) {
 		if (id != null) {
 			// hoeft volgens mij niet
-			System.out.println("yup, het moest dus wel");
 		} else if (mM.hasMemory(from)) {
 			if (checkResult.getType(from).equals(Type.CHAR)) {
 				emit(OpCode.cloadAI, arp, offset(from), reg(to));

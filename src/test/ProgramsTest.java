@@ -14,7 +14,7 @@ import org.junit.Test;
 import checker.ParseException;
 import compiler.TempNameCompiler;
 
-public class programsTest {
+public class ProgramsTest {
 	private final static String BASE_DIR = "src/files";
 	private final static String EXT = ".tmp";
 	private final TempNameCompiler compiler = TempNameCompiler.instance();
