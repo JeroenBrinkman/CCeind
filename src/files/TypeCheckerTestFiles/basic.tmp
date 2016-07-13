@@ -1,7 +1,7 @@
 start {
 	#Declerations and assignment seperated#
 	integer a;
-	boolen b;
+	boolean b;
 	char c;
 	string d;
 	a := 1337;
