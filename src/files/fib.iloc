@@ -1,0 +1,54 @@
+Program:   nop                                   
+           in      "n0? : "  => r_0              
+           storeAI r_0       => r_arp,0          
+           loadAI  r_arp,0   => r_0              
+           loadI   1         => r_1              
+           loadAI  r_arp,0   => r_2              
+           cmp_LE  r_2,r_1   => r_3              
+           cbr     r_3       -> n_7_8,n_9_8      
+n_7_8:     nop                                   
+           loadI   1         => r_4              
+           out     "1: ",r_4                     
+           storeAI r_4       => r_arp,4          
+           loadAI  r_arp,4   => r_5              
+           storeAI r_5       => r_arp,4          
+           storeAI r_5       => r_arp,8          
+           jumpI             -> endIf_6_1        
+n_9_8:     nop                                   
+           loadI   1         => r_6              
+           storeAI r_6       => r_arp,12         
+           loadI   1         => r_7              
+           storeAI r_7       => r_arp,16         
+           loadI   1         => r_8              
+           storeAI r_8       => r_arp,20         
+n_12_8:    nop                                   
+           loadAI  r_arp,20  => r_9              
+           loadAI  r_arp,0   => r_10             
+           cmp_LT  r_9,r_10  => r_11             
+           cbr     r_11      -> n_13_19,end_12_2 
+n_13_19:   nop                                   
+           loadAI  r_arp,12  => r_12             
+           loadAI  r_arp,16  => r_13             
+           add     r_12,r_13 => r_14             
+           storeAI r_14      => r_arp,24         
+           loadAI  r_arp,12  => r_15             
+           storeAI r_15      => r_arp,16         
+           loadAI  r_arp,24  => r_16             
+           storeAI r_16      => r_arp,12         
+           loadI   1         => r_17             
+           loadAI  r_arp,20  => r_18             
+           add     r_18,r_17 => r_19             
+           storeAI r_19      => r_arp,20         
+           loadAI  r_arp,20  => r_20             
+           jumpI             -> n_12_8           
+end_12_2:  nop                                   
+           loadAI  r_arp,12  => r_21             
+           out     "n1: ",r_21                   
+           storeAI r_21      => r_arp,28         
+           loadAI  r_arp,28  => r_22             
+           storeAI r_22      => r_arp,24         
+           storeAI r_22      => r_arp,8          
+endIf_6_1: nop                                   
+           loadAI  r_arp,8   => r_23             
+           storeAI r_23      => r_arp,12         
+
