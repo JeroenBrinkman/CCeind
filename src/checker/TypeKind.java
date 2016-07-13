@@ -1,6 +1,6 @@
 package checker;
 
-/** Pascal data type kind. */
+/** TempName data type kind. */
 public enum TypeKind {
 	/** Integer base type. */
 	INT,

@@ -2,7 +2,7 @@ package checker;
 
 import iloc.eval.Machine;
 
-/** Pascal data type. */
+/** TempName data type. */
 abstract public class Type {
 	/** The singleton instance of the {@link Bool} type. */
 	public static final Type BOOL = new Bool();
