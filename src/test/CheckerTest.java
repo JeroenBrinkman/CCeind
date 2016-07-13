@@ -181,7 +181,6 @@ public class CheckerTest {
 	}
 
 	private Result check(ParseTree tree) throws ParseException {
-
 		return this.compiler.check(tree);
 	}
 }

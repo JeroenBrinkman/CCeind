@@ -1,4 +1,0 @@
-start{
-	string s := "hoi";
-	#print(s);#
-}

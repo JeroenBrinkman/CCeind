@@ -13,6 +13,7 @@ public class Result {
 	private final ParseTreeProperty<ParserRuleContext> entries = new ParseTreeProperty<>();
 	/** Mapping from expressions to types. */
 	private final ParseTreeProperty<Type> types = new ParseTreeProperty<>();
+	/** Type mapping for reads */
 	private final ParseTreeProperty<Type[]> readtypes = new ParseTreeProperty<>();
 
 	/** Adds an association from parse tree node to the flow graph entry. */
@@ -40,10 +41,16 @@ public class Result {
 		return this.types.get(node);
 	}
 
+	/**
+	 * adds a type mapping for a read node
+	 */
 	public void setReadTypes(ParseTree node, Type[] tps) {
 		this.readtypes.put(node, tps);
 	}
 
+	/**
+	 * Get the type mapping for a read node
+	 */
 	public Type[] getReadTypes(ParseTree node) {
 		return this.readtypes.get(node);
 	}
