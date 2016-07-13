@@ -63,6 +63,9 @@ public class MemoryManager {
 		regman = new RegisterManager();
 	}
 
+	/**
+	 * Checks whether a node is in one of our scopes
+	 */
 	private boolean inScope(ParseTree ctx) {
 		ArrayList<ParseTree> scope;
 		for (Iterator<ArrayList<ParseTree>> itr = nodeScopes.iterator(); itr.hasNext();) {
@@ -74,6 +77,9 @@ public class MemoryManager {
 		return false;
 	}
 
+	/**
+	 * Checks whether an id is in one of our scopes
+	 */
 	private boolean inScope(String id) {
 		ArrayList<String> scope;
 		for (Iterator<ArrayList<String>> itr = idScopes.iterator(); itr.hasNext();) {
@@ -290,6 +296,9 @@ public class MemoryManager {
 		return reg;
 	}
 
+	/**
+	 * Checks whether the given node has a register
+	 */
 	public boolean hasReg(ParseTree ctx) {
 		return regman.getReg(ctx) != null;
 	}
@@ -304,6 +313,10 @@ public class MemoryManager {
 		return out;
 	}
 
+	/**
+	 * Fancy toString, allows you to choose if you what parts you want to
+	 * toString
+	 */
 	public String toString(boolean mem, boolean reg) {
 		String out = "";
 		if (mem) {

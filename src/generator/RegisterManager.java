@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 /**
  * Manages register usage. Limits the maximum amount of registers to MAXREG.
  * getOrReserveRegister is the recommended method for reserving variables.
- * Constants are //TODO
  *
  * @author Jeroen
  */
@@ -38,7 +37,7 @@ public class RegisterManager {
 	}
 
 	private final ArrayList<Register> registers = new ArrayList<Register>();
-	private static final int MAXREG = 50;
+	private static final int MAXREG = 100;
 
 	public RegisterManager() {
 		for (int i = 0; i < MAXREG; i++) {
@@ -110,6 +109,10 @@ public class RegisterManager {
 		}
 	}
 
+	/**
+	 * Get a register that is not bound to either an id or an node. Usefull if
+	 * you need more than one register for an operation.
+	 */
 	public String getConstReg() {
 		Register r = null;
 		for (int i = 0; i < MAXREG; i++) {
@@ -127,7 +130,8 @@ public class RegisterManager {
 	public String toString() {
 		String out = "Registers : \n";
 		for (Register r : registers) {
-			out = out + r.toString() + " " + (r.constant ? "constant" : (r.ctx == null ? "null" : r.ctx.getText()) + "\n");
+			out = out + r.toString() + " "
+					+ (r.constant ? "constant" : (r.ctx == null ? "null" : r.ctx.getText()) + "\n");
 		}
 		return out;
 	}
