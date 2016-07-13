@@ -1,7 +1,7 @@
 start {
 	#Declerations and assignment seperated#
-	integer a := 0 #:= 0 --Dit zorgt dat het werkt--#;
-	boolean b;
+	integer a;
+	boolen b;
 	char c;
 	string d;
 	a := 1337;

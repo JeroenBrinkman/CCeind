@@ -19,29 +19,7 @@ public class GeneratorTest {
 	private final static String EXT = ".tmp";
 	private final TempNameCompiler compiler = TempNameCompiler.instance();
 
-	@Test
-	public void basic(){
-		System.out.println("----Testing Basic----");
-		Program prog;
-		try {
-			prog = compile("basic");
-			System.out.println(prog.prettyPrint());
-			String out = sim(prog, "");
-			System.out.println(out);
-			assertTrue("If fault", out.contains("c: b"));
-			assertTrue("Increment fault", out.contains("i: 5"));
-		} catch (IOException e) {
-			fail("Read/Write fault");
-		} catch (ParseException e) {
-			System.err.println("Errors: ");
-			for(String msg : e.getMessages()){
-				System.err.println(msg);
-			}
-			fail("An error occured, see command line for more information.");
-		}
-		
-
-	}
+	
 	@Test
 	public void readPrint() {
 		System.out.println("----Testing Read Print----");

@@ -2,8 +2,8 @@ start {
 	integer a;
 	integer b;
 	integer t;
-	read(a);
-	read(b);
+	read(a); #Input 1#
+	read(b); #Input 2#
 	while b <> 0 do {
 		t := b;
 		b := a % b;

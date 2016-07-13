@@ -19,7 +19,7 @@ start {
 	while a < b do a + b;
 	while false do a - b;
 
-	#Read -> ERRORS#
+	#Read#
 	integer i  := read(a);
 	boolean ia := read(aa);
 	char ib    := read(ab);
@@ -33,7 +33,7 @@ start {
 	string o  := print("1337");
 	integer oa := print(if a > b then 4 else 5);
 
-	#Par#
+	#Parenthesis#
 	integer p := (4);
 	integer q := (a + b);
 	boolean r := (if a > b then true else false);
@@ -41,7 +41,7 @@ start {
 	string t  := ("Hello World!");
 	integer u := (1 + (c * d));
 
-	#Brace#
+	#Block#
 	integer v := { 69;};
 	integer w := {'d'; "gg"; true; 69;};
 	boolean x := {true;};

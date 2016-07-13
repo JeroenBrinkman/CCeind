@@ -153,6 +153,28 @@ public class CheckerTest {
 
 		}
 	}
+	
+	@SuppressWarnings("unused")
+	@Test
+	public void testErr3() {
+		System.out.println("----Testing Error 3----");
+		ParseTree tree;
+		Result result;
+		try {
+			tree = parse("err3");
+			result = check(tree);
+			System.out.println(tree.toStringTree());
+			fail("No errors occured.");
+		} catch (IOException e) {
+			fail("File error.");
+		} catch (ParseException e) {
+			System.err.println("Errors: ");
+			for (String msg : e.getMessages()) {
+				System.err.println(msg);
+			}
+
+		}
+	}
 
 	private ParseTree parse(String filename) throws IOException, ParseException {
 		return this.compiler.parse(new File(BASE_DIR, filename + EXT));

@@ -332,7 +332,7 @@ public class TypeChecker extends TempNameBaseListener {
 			checkType(ctx.expr(), getType(ctx.type()));
 			setEntry(ctx, entry(ctx.expr()));
 			if (!sT.add(ctx.ID().getText(), getType(ctx.type()))) {
-				addError(ctx, "Illegal declaration, '$s' already in scope.", ctx.ID().getText());
+				addError(ctx, "Illegal declaration, '%s' already in scope.", ctx.ID().getText());
 			} else {
 
 				setType(ctx.ID(), getType(ctx.type()));
